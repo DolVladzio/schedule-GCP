@@ -3,7 +3,7 @@ set -euo pipefail
 #########################################################################
 CONFIG_PATH=$1
 KEY_FILE="${2%.json}.json"
-ENV_FILE="./shell_scripts/gcp_cloud_env.sh"
+ENV_FILE="./gcp_cloud_env.sh"
 PROJECT_ID=$(gcloud config get-value project)
 # Service account
 SERVICE_ACCOUNT_NAME=$(grep -oP '"terraform_username":\s*"\K[^"]+' "$CONFIG_PATH")
@@ -166,15 +166,6 @@ if [ -z "$NEW_BUCKET_NAME" ]; then
     cat > "$ENV_FILE" <<EOL
 export TF_VAR_cloud_bucket=$NEW_BUCKET_NAME
 EOL
-
-    GITIGNORE_FILE=".gitignore"
-    if [ ! -f "$GITIGNORE_FILE" ]; then
-        touch "$GITIGNORE_FILE"
-    fi
-    if ! grep -Fxq "$ENV_FILE" "$GITIGNORE_FILE"; then
-        echo "$ENV_FILE" >> "$GITIGNORE_FILE"
-        echo "Added $ENV_FILE to $GITIGNORE_FILE"
-    fi
 fi
 echo
 #########################################################################
