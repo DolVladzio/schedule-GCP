@@ -71,22 +71,16 @@ echo
 #########################################################################
 IAM_ROLES=(
 	"editor"
-	"compute.networkAdmin"
 	"secretmanager.secretAccessor"
-	"iam.serviceAccountViewer"
+	"iam.serviceAccountUser"
 	"logging.logWriter"
 	"monitoring.metricWriter"
 	"monitoring.viewer"
-
-    "iam.serviceAccountViewer"
 	"servicenetworking.admin"
 	"compute.networkAdmin"
 	"storage.objectAdmin"
-
 	"container.admin"
 	"container.clusterAdmin"
-	"iam.serviceAccountUser"
-
 	"artifactregistry.reader"
 	"artifactregistry.writer"
 )
