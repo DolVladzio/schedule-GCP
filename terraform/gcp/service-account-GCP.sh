@@ -2,17 +2,26 @@
 set -euo pipefail
 #########################################################################
 CONFIG_PATH=$1
-ENV_FILE="gcp_cloud_env.sh"
-SERVICE_ACCOUNT_NAME=$(grep -oP '"terraform_username":\s*"\K[^"]+' "$CONFIG_PATH")
-PROJECT_ID=$(gcloud config get-value project)
-DESCRIPTION="The service account for the Terraform"
 KEY_FILE="${2%.json}.json"
+ENV_FILE="gcp_cloud_env.sh"
+PROJECT_ID=$(gcloud config get-value project)
+# Service account
+SERVICE_ACCOUNT_NAME=$(grep -oP '"terraform_username":\s*"\K[^"]+' "$CONFIG_PATH")
+DESCRIPTION="The service account for the Terraform"
+# Bucket
 BUCKET_LOCATION=$(grep -oP '"state_bucket_location_gcp":\s*"\K[^"]+' "$CONFIG_PATH")
+NEW_BUCKET_NAME=""
+# Artifact registry
+ARTIFACT_REGISTRY_GCP=$(grep -oP '"artifact_registry_gcp":\s*"\K[^"]+' "$CONFIG_PATH")
+ARTIFACT_REGISTRY_GCP_FORMAT=$(grep -oP '"artifact_registry_gcp_format":\s*"\K[^"]+' "$CONFIG_PATH")
+ARTIFACT_REGISTRY_GCP_LOCATION=$(grep -oP '"artifact_registry_gcp_location":\s*"\K[^"]+' "$CONFIG_PATH")
+ARTIFACT_REGISTRY_GCP_DESCRIPTION="The artifact registry for the docker images"
+# Secrets
 SECRET_NAME_DB_USERNAME=$(grep -oP '"secret_name_db_username":\s*"\K[^"]+' "$CONFIG_PATH")
 SECRET_NAME_DB_PASS=$(grep -oP '"secret_name_db_pass":\s*"\K[^"]+' "$CONFIG_PATH")
+SECRET_NAME_GAR_BASE64=$(grep -oP '"secret_name_gar_base64":\s*"\K[^"]+' "$CONFIG_PATH")
 DB_USERNAME=postgres
 DB_PASS=postgres
-NEW_BUCKET_NAME=""
 #########################################################################
 if [[ -z "$PROJECT_ID" ]]; then
 	echo "=== Error: Unable to retrieve GCP project ID. Use 'gcloud config set project YOUR_PROJECT_ID' ==="
@@ -105,8 +114,6 @@ fi
 echo
 
 base64 "$KEY_FILE" > tfbase64
-
-SECRET_NAME_GAR_BASE64=$(grep -oP '"secret_name_gar_base64":\s*"\K[^"]+' "$CONFIG_PATH")
 #########################################################################
 check_secret_exists() {
     gcloud secrets describe "$1" --project="$2" &>/dev/null
@@ -177,13 +184,21 @@ EOL
 fi
 echo
 #########################################################################
-echo "=== Creating an artifact registry... ==="
-gcloud artifacts repositories add-iam-policy-binding REPOSITORY_NAME \
-    --location=LOCATION \
-    --member=USER_OR_SERVICE_ACCOUNT \
-    --role=ROLE
-
-echo
+if gcloud artifacts repositories describe "${ARTIFACT_REGISTRY_GCP}" \
+		--location="${ARTIFACT_REGISTRY_GCP_LOCATION}" &>/dev/null; then
+    echo "=== The artifact registry: '${ARTIFACT_REGISTRY_GCP}' already exists. ==="
+else
+    echo "=== Creating the artifact registry: '${ARTIFACT_REGISTRY_GCP}'... ==="
+    if gcloud artifacts repositories create "${ARTIFACT_REGISTRY_GCP}" \
+        --repository-format="${ARTIFACT_REGISTRY_GCP_FORMAT}" \
+        --location="${ARTIFACT_REGISTRY_GCP_LOCATION}" \
+        --description="${ARTIFACT_REGISTRY_GCP_DESCRIPTION}"; then
+        echo "=== The artifact registry: '${ARTIFACT_REGISTRY_GCP}' was created successfully! ==="
+    else
+        echo "=== Failed to create the artifact registry: '${ARTIFACT_REGISTRY_GCP}'. ==="
+        exit 1
+    fi
+fi
 #########################################################################
 # startTerraformAndApply() {
 # 	echo "=== Initializing Terraform ==="
