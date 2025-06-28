@@ -14,6 +14,13 @@ ARTIFACT_REGISTRY_GCP_LOCATION=$(grep -oP '"artifact_registry_gcp_location":\s*"
 # Bucket
 NEW_BUCKET_NAME=$(grep -oP 'state-bucket-name-[^ ]*' "gcp_cloud_env.sh")
 #########################################################################
+destroyTerraform() {
+	echo "=== Destroying Terraform ==="
+	terraform destroy --auto-approve
+	echo "=== Terraform destroyed ==="
+}
+destroyTerraform "$NEW_BUCKET_NAME"
+#########################################################################
 check_secret_exists() {
     gcloud secrets describe "$1" --project="$2" &>/dev/null
 }

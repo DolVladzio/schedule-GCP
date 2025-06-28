@@ -3,7 +3,7 @@ set -euo pipefail
 #########################################################################
 CONFIG_PATH=$1
 KEY_FILE="${2%.json}.json"
-ENV_FILE="gcp_cloud_env.sh"
+ENV_FILE="./shell_scripts/gcp_cloud_env.sh"
 PROJECT_ID=$(gcloud config get-value project)
 # Service account
 SERVICE_ACCOUNT_NAME=$(grep -oP '"terraform_username":\s*"\K[^"]+' "$CONFIG_PATH")
