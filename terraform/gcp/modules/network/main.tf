@@ -17,7 +17,7 @@ locals {
 # 1) Create VPCs for each network
 resource "google_compute_network" "vpc" {
   for_each                = local.vpcs_map
-  name                    = "${var.project_id}-${each.key}-vpc"
+  name                    = lookup(each.value, "name", "k8s-vpc")
   auto_create_subnetworks = false
 }
 
