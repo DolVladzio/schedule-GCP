@@ -2,18 +2,17 @@
 CONFIG_PATH=$1
 KEY_FILE="${2%.json}.json"
 PROJECT_ID=$(gcloud config get-value project)
+export GOOGLE_APPLICATION_CREDENTIALS=$KEY_FILE
 # Secrets
 SECRET_NAME_DB_USERNAME=$(grep -oP '"secret_name_db_username":\s*"\K[^"]+' "$CONFIG_PATH")
 SECRET_NAME_DB_PASS=$(grep -oP '"secret_name_db_pass":\s*"\K[^"]+' "$CONFIG_PATH")
-SECRET_NAME_GAR_BASE64=$(grep -oP '"jenkins_gar_base64":\s*"\K[^"]+' "$CONFIG_PATH")
+SECRET_NAME_GAR_BASE64=$(grep -oP '"secret_name_gar_base64":\s*"\K[^"]+' "$CONFIG_PATH")
 # Artifact registry
 ARTIFACT_REGISTRY_GCP=$(grep -oP '"artifact_registry_gcp":\s*"\K[^"]+' "$CONFIG_PATH")
 ARTIFACT_REGISTRY_GCP_FORMAT=$(grep -oP '"artifact_registry_gcp_format":\s*"\K[^"]+' "$CONFIG_PATH")
 ARTIFACT_REGISTRY_GCP_LOCATION=$(grep -oP '"artifact_registry_gcp_location":\s*"\K[^"]+' "$CONFIG_PATH")
 # Bucket
 NEW_BUCKET_NAME=$(grep -oP 'state-bucket-name-[^ ]*' "gcp_cloud_env.sh")
-
-export GOOGLE_APPLICATION_CREDENTIALS=$KEY_FILE
 #########################################################################
 check_secret_exists() {
     gcloud secrets describe "$1" --project="$2" &>/dev/null
@@ -37,13 +36,36 @@ delete_secret "$SECRET_NAME_DB_USERNAME" "$PROJECT_ID"
 delete_secret "$SECRET_NAME_DB_PASS" "$PROJECT_ID"
 delete_secret "$SECRET_NAME_GAR_BASE64" "$PROJECT_ID"
 #########################################################################
-echo "=== Deleting the bucket: ${NEW_BUCKET_NAME}... ==="
-
-if gcloud storage buckets delete "gs://${NEW_BUCKET_NAME}" --project=${PROJECT_ID}; then
-	echo "=== The bucket: ${NEW_BUCKET_NAME} was deleted! ==="
+if gcloud storage buckets describe "gs://${NEW_BUCKET_NAME}" \
+		--project="${PROJECT_ID}" &>/dev/null; then
+    echo "=== The bucket: gs://${NEW_BUCKET_NAME} exists. Deleting it... ==="
+    if gcloud storage buckets delete "gs://${NEW_BUCKET_NAME}" \
+		--project="${PROJECT_ID}"; then
+        echo "=== The bucket: hs://${NEW_BUCKET_NAME} was deleted! ==="
+    else
+        echo "=== Failed to delete the bucket: ${NEW_BUCKET_NAME}. ==="
+        exit 1
+    fi
 else
-	echo "=== === The bucket: ${NEW_BUCKET_NAME} wasn't deleted! Perhaps it's not exist( ==="
+    echo "=== The bucket: ${NEW_BUCKET_NAME} does not exist. Nothing to delete. ==="
 fi
+echo
 #########################################################################
-# echo "=== Deleting the artifact registry: ${ARTIFACT_REGISTRY_GCP}... ==="
+if gcloud artifacts repositories describe "${ARTIFACT_REGISTRY_GCP}" \
+		--location="${ARTIFACT_REGISTRY_GCP_LOCATION}" &>/dev/null; then
+    echo "=== The artifact registry: '${ARTIFACT_REGISTRY_GCP}' exists. Deleting it... ==="
+    if gcloud artifacts repositories delete "${ARTIFACT_REGISTRY_GCP}" \
+			--location="${ARTIFACT_REGISTRY_GCP_LOCATION}" \
+			--quiet; then
+        echo "=== The artifact registry: '${ARTIFACT_REGISTRY_GCP}' was deleted successfully! ==="
+    else
+        echo "=== Failed to delete the artifact registry: '${ARTIFACT_REGISTRY_GCP}'. ==="
+        exit 1
+    fi
+else
+    echo "=== The artifact registry: '${ARTIFACT_REGISTRY_GCP}' does not exist. Nothing to delete. ==="
+fi
+echo
+#########################################################################
+echo "=== Everything was destroyed successfully! ==="
 #########################################################################
