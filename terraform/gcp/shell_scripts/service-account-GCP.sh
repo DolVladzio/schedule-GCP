@@ -19,7 +19,6 @@ ARTIFACT_REGISTRY_GCP_DESCRIPTION="The artifact registry for the docker images"
 # Secrets
 SECRET_NAME_DB_USERNAME=$(grep -oP '"secret_name_db_username":\s*"\K[^"]+' "$CONFIG_PATH")
 SECRET_NAME_DB_PASS=$(grep -oP '"secret_name_db_pass":\s*"\K[^"]+' "$CONFIG_PATH")
-SECRET_NAME_GAR_BASE64=$(grep -oP '"secret_name_gar_base64":\s*"\K[^"]+' "$CONFIG_PATH")
 DB_USERNAME=postgres
 DB_PASS=postgres
 #########################################################################
@@ -137,7 +136,6 @@ create_secret() {
 }
 create_secret "$SECRET_NAME_DB_USERNAME" "$PROJECT_ID" "$DB_USERNAME"
 create_secret "$SECRET_NAME_DB_PASS" "$PROJECT_ID" "$DB_PASS"
-create_secret "$SECRET_NAME_GAR_BASE64" "$PROJECT_ID" "$(cat tfbase64)"
 
 echo
 #########################################################################

@@ -6,7 +6,6 @@ export GOOGLE_APPLICATION_CREDENTIALS=$KEY_FILE
 # Secrets
 SECRET_NAME_DB_USERNAME=$(grep -oP '"secret_name_db_username":\s*"\K[^"]+' "$CONFIG_PATH")
 SECRET_NAME_DB_PASS=$(grep -oP '"secret_name_db_pass":\s*"\K[^"]+' "$CONFIG_PATH")
-SECRET_NAME_GAR_BASE64=$(grep -oP '"secret_name_gar_base64":\s*"\K[^"]+' "$CONFIG_PATH")
 # Artifact registry
 ARTIFACT_REGISTRY_GCP=$(grep -oP '"artifact_registry_gcp":\s*"\K[^"]+' "$CONFIG_PATH")
 ARTIFACT_REGISTRY_GCP_FORMAT=$(grep -oP '"artifact_registry_gcp_format":\s*"\K[^"]+' "$CONFIG_PATH")
@@ -41,7 +40,6 @@ delete_secret() {
 
 delete_secret "$SECRET_NAME_DB_USERNAME" "$PROJECT_ID"
 delete_secret "$SECRET_NAME_DB_PASS" "$PROJECT_ID"
-delete_secret "$SECRET_NAME_GAR_BASE64" "$PROJECT_ID"
 #########################################################################
 if gcloud storage buckets describe "gs://${NEW_BUCKET_NAME}" \
 		--project="${PROJECT_ID}" &>/dev/null; then
