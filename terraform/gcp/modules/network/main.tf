@@ -60,7 +60,7 @@ resource "google_compute_firewall" "ingress" {
       ports    = [tostring(allow.value.port)]
     }
   }
-  
+
   depends_on = [google_compute_network.vpc]
 
   # Handle source ranges properly - either use CIDR from ACLs or default to 0.0.0.0/0

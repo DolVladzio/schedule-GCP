@@ -5,8 +5,8 @@ locals {
     gcp = "europe-west3"
   }
 
-  region      = local.fixed_region_map["gcp"]
-  
+  region = local.fixed_region_map["gcp"]
+
   db_password = "password"
   db_username = "user"
 
@@ -50,10 +50,10 @@ module "cloudflare_dns" {
 }
 
 module "gke_cluster" {
-  source            = "./modules/gke_cluster"
-  clusters          = local.config.gke_clusters
-  vpc_self_links    = module.network.vpc_self_links
-  subnet_self_links = module.network.subnet_self_links_by_name
+  source                = "./modules/gke_cluster"
+  clusters              = local.config.gke_clusters
+  vpc_self_links        = module.network.vpc_self_links
+  subnet_self_links     = module.network.subnet_self_links_by_name
   service_account_email = local.config.project.service_account_email
 
   depends_on = [module.network]
