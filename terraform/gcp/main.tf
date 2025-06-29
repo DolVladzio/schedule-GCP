@@ -6,12 +6,9 @@ locals {
   }
 
   region      = local.fixed_region_map["gcp"]
+  
   db_password = "password"
   db_username = "user"
-
-  ssh_keys = local.config.project.keys
-
-  service_account_email = local.config.project.service_account_email
 
   primary_gke_key = keys(module.gke_cluster.cluster_endpoints)[0]
 }
@@ -57,9 +54,13 @@ module "gke_cluster" {
   clusters          = local.config.gke_clusters
   vpc_self_links    = module.network.vpc_self_links
   subnet_self_links = module.network.subnet_self_links_by_name
+
+  depends_on = [module.network]
 }
 
 module "cloud_monitoring" {
   source            = "./modules/cloud_monitoring"
   monitoring_config = local.config.monitoring
+
+  depends_on = [module.gke_cluster]
 }

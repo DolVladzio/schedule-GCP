@@ -39,6 +39,8 @@ resource "google_compute_subnetwork" "subnet" {
   ip_cidr_range = each.value.subnet_data.cidr
   region        = var.region
   network       = google_compute_network.vpc[each.value.network_name].id
+
+  depends_on = [google_compute_network.vpc]
 }
 
 resource "google_compute_firewall" "ingress" {
@@ -58,6 +60,8 @@ resource "google_compute_firewall" "ingress" {
       ports    = [tostring(allow.value.port)]
     }
   }
+  
+  depends_on = [google_compute_network.vpc]
 
   # Handle source ranges properly - either use CIDR from ACLs or default to 0.0.0.0/0
   source_ranges = distinct(flatten([
@@ -73,40 +77,14 @@ resource "google_compute_firewall" "ingress" {
   ]))
 }
 
-# 4) Egress firewalls
-# resource "google_compute_firewall" "egress" {
-#   for_each = {
-#     for sg in var.security_groups : sg.name => sg
-#     if length(sg.egress) > 0
-#   }
-
-#   name        = "${each.key}-egress"
-#   network     = google_compute_network.vpc[each.value.vpc].self_link
-#   target_tags = each.value.attach_to
-#   direction   = "EGRESS"
-
-#   dynamic "allow" {
-#     for_each = each.value.egress
-#     content {
-#       protocol = allow.value.protocol
-#       ports    = [tostring(allow.value.port)]
-#     }
-#   }
-
-#   # Handle destination ranges properly - either use CIDR from ACLs or leave empty for all destinations
-#   destination_ranges = distinct(flatten([
-#     for rule in each.value.egress :
-#     contains(keys(local.acls_map), rule.destination) ? [local.acls_map[rule.destination]] : ["0.0.0.0/0"]
-#     if !contains(keys(local.sg_to_instances_map), rule.destination)
-#   ]))
-
-# }
 resource "google_compute_router" "nat_router" {
   for_each = google_compute_network.vpc
 
   name    = "${each.key}-nat-router"
   network = each.value.self_link
   region  = var.region
+
+  depends_on = [google_compute_network.vpc]
 }
 
 resource "google_compute_router_nat" "cloud_nat" {
@@ -118,6 +96,8 @@ resource "google_compute_router_nat" "cloud_nat" {
 
   nat_ip_allocate_option             = "AUTO_ONLY"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+
+  depends_on = [google_compute_network.vpc]
 }
 resource "google_compute_firewall" "lb_health_check" {
   name      = "${var.project_id}-k3s-vpc-lb-health-check"
@@ -135,6 +115,8 @@ resource "google_compute_firewall" "lb_health_check" {
   ]
 
   target_tags = ["k3s-worker", "k3s-master"]
+
+  depends_on = [google_compute_network.vpc]
 }
 
 resource "google_compute_global_address" "default" {
@@ -148,7 +130,8 @@ resource "google_compute_global_address" "default" {
   address_type  = "INTERNAL"
   purpose       = "VPC_PEERING"
   network       = google_compute_network.vpc[each.key].self_link
-  # address       = each.value.cidr
+
+  depends_on = [google_compute_network.vpc]
 }
 
 resource "google_service_networking_connection" "private_vpc_connection" {
@@ -161,4 +144,6 @@ resource "google_service_networking_connection" "private_vpc_connection" {
   update_on_creation_fail = true
 
   deletion_policy = "ABANDON"
+
+  depends_on = [google_compute_network.vpc]
 }
