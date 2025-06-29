@@ -26,12 +26,6 @@ module "network" {
   health_check_port = var.health_check_port
 }
 
-resource "google_project_service" "monitoring" {
-  service                    = "monitoring.googleapis.com"
-  project                    = local.config.project.name
-  disable_dependent_services = true
-}
-
 module "db-instance" {
   source            = "./modules/db-instance"
   project_id        = local.config.project.name
