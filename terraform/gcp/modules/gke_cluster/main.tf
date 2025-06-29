@@ -1,3 +1,4 @@
+##################################################################
 locals {
   cluster_node_pools = flatten([
     for cluster_key, cluster in var.clusters : [
@@ -17,7 +18,7 @@ locals {
     for pool in local.cluster_node_pools : pool.pool_key => pool
   }
 }
-
+##################################################################
 resource "google_container_cluster" "gke" {
   for_each = var.clusters
   name     = each.value.name
@@ -55,7 +56,7 @@ resource "google_container_cluster" "gke" {
 
   ip_allocation_policy {}
 }
-
+##################################################################
 resource "google_container_node_pool" "custom_node_pools" {
   for_each = local.node_pools_map
   name     = each.value.name
@@ -82,4 +83,4 @@ resource "google_container_node_pool" "custom_node_pools" {
 
   depends_on = [google_container_cluster.gke]
 }
-
+##################################################################

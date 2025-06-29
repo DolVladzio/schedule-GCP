@@ -1,3 +1,4 @@
+##################################################################
 locals {
   config = jsondecode(file("${path.module}/../config.json"))
 
@@ -12,7 +13,7 @@ locals {
 
   primary_gke_key = keys(module.gke_cluster.cluster_endpoints)[0]
 }
-
+##################################################################
 module "network" {
   source            = "./modules/network"
   project_id        = local.config.project.name
@@ -22,7 +23,7 @@ module "network" {
   security_groups   = local.config.security_groups
   health_check_port = var.health_check_port
 }
-
+##################################################################
 module "db-instance" {
   source            = "./modules/db-instance"
   project_id        = local.config.project.name
@@ -35,12 +36,12 @@ module "db-instance" {
 
   depends_on = [module.network]
 }
-
+##################################################################
 module "static_ips" {
   source     = "./modules/static_ips"
   static_ips = local.config.static_ips
 }
-
+##################################################################
 module "cloudflare_dns" {
   source               = "../shared_modules/cloudflare_dns"
   cloudflare_zone_id   = var.cloudflare_zone_id
@@ -48,7 +49,7 @@ module "cloudflare_dns" {
   resource_dns_map     = module.static_ips.ip_addresses
   cloudflare_api_token = var.cloudflare_api_token
 }
-
+##################################################################
 module "gke_cluster" {
   source                = "./modules/gke_cluster"
   clusters              = local.config.gke_clusters
@@ -58,10 +59,11 @@ module "gke_cluster" {
 
   depends_on = [module.network]
 }
-
+##################################################################
 module "cloud_monitoring" {
   source            = "./modules/cloud_monitoring"
   monitoring_config = local.config.monitoring
 
   depends_on = [module.gke_cluster]
 }
+##################################################################

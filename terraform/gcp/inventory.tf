@@ -1,3 +1,4 @@
+##################################################################
 locals {
   db_name = "maindb" # Default database name
 
@@ -11,8 +12,9 @@ locals {
     static_ips = module.static_ips.ip_addresses
   })
 }
-
+##################################################################
 resource "local_file" "ansible_inventory" {
   content  = local.inventory
   filename = "${path.module}/../../ansible/inventory/inventory.ini"
 }
+##################################################################

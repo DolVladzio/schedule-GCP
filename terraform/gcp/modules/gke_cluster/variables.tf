@@ -1,3 +1,4 @@
+##################################################################
 variable "clusters" {
   description = "Map of GKE clusters to create"
   type = map(object({
@@ -24,15 +25,16 @@ variable "clusters" {
     kubernetes_version = string
   }))
 }
-
+##################################################################
 variable "vpc_self_links" {
   description = "Map of network name to VPC self_link"
   type        = map(string)
 }
-
+##################################################################
 variable "subnet_self_links" {
   description = "Map from network-subnet name to self_link"
   type        = map(string)
 }
-
+##################################################################
 variable "service_account_email" {}
+##################################################################
