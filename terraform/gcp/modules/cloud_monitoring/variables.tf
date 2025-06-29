@@ -1,3 +1,4 @@
+##################################################################
 variable "monitoring_config" {
   description = "Monitoring configuration object"
   type = object({
@@ -31,3 +32,4 @@ variable "monitoring_config" {
     }))
   })
 }
+##################################################################

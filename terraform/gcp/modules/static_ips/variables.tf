@@ -1,3 +1,4 @@
+##################################################################
 variable "static_ips" {
   description = "List of static IPs to reserve"
   type = list(object({
@@ -6,3 +7,4 @@ variable "static_ips" {
     region = optional(string)
   }))
 }
+##################################################################

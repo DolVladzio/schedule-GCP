@@ -1,3 +1,4 @@
+##################################################################
 locals {
   acls_map = { for a in var.acls : a.name => a.cidr }
 
@@ -13,14 +14,14 @@ locals {
   # Create a map of security group name to the instances it's attached to
   sg_to_instances_map = { for sg in var.security_groups : sg.name => sg.attach_to }
 }
-
+##################################################################
 # 1) Create VPCs for each network
 resource "google_compute_network" "vpc" {
   for_each                = local.vpcs_map
   name                    = lookup(each.value, "name", "k8s-vpc")
   auto_create_subnetworks = false
 }
-
+##################################################################
 # 2) Regional subnets for each network
 resource "google_compute_subnetwork" "subnet" {
   for_each = {
@@ -42,7 +43,7 @@ resource "google_compute_subnetwork" "subnet" {
 
   depends_on = [google_compute_network.vpc]
 }
-
+##################################################################
 resource "google_compute_firewall" "ingress" {
   for_each = {
     for sg in var.security_groups : sg.name => sg
@@ -76,7 +77,7 @@ resource "google_compute_firewall" "ingress" {
     contains(keys(local.sg_to_instances_map), rule.source) ? local.sg_to_instances_map[rule.source] : []
   ]))
 }
-
+##################################################################
 resource "google_compute_router" "nat_router" {
   for_each = google_compute_network.vpc
 
@@ -86,7 +87,7 @@ resource "google_compute_router" "nat_router" {
 
   depends_on = [google_compute_network.vpc]
 }
-
+##################################################################
 resource "google_compute_router_nat" "cloud_nat" {
   for_each = local.vpcs_map
 
@@ -99,6 +100,7 @@ resource "google_compute_router_nat" "cloud_nat" {
 
   depends_on = [google_compute_network.vpc]
 }
+##################################################################
 resource "google_compute_firewall" "lb_health_check" {
   name      = "${var.project_id}-k3s-vpc-lb-health-check"
   network   = google_compute_network.vpc["k3s-vpc"].self_link
@@ -118,7 +120,7 @@ resource "google_compute_firewall" "lb_health_check" {
 
   depends_on = [google_compute_network.vpc]
 }
-
+##################################################################
 resource "google_compute_global_address" "default" {
   for_each = local.psa_ranges_map
 
@@ -133,7 +135,7 @@ resource "google_compute_global_address" "default" {
 
   depends_on = [google_compute_network.vpc]
 }
-
+##################################################################
 resource "google_service_networking_connection" "private_vpc_connection" {
   for_each = local.psa_ranges_map
 
@@ -147,3 +149,4 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 
   depends_on = [google_compute_network.vpc]
 }
+##################################################################

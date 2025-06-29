@@ -1,3 +1,4 @@
+##################################################################
 output "vpc_self_links" {
   description = "Map of network name to VPC self_link"
   value = {
@@ -5,7 +6,7 @@ output "vpc_self_links" {
     name => vpc.self_link
   }
 }
-
+##################################################################
 output "subnet_self_links" {
   description = "Map from network-subnet key to self_link"
   value = {
@@ -13,7 +14,7 @@ output "subnet_self_links" {
     key => subnet.self_link
   }
 }
-
+##################################################################
 output "subnet_self_links_by_name" {
   description = "Map from subnet name to self_link (for backward compatibility)"
   value = {
@@ -21,3 +22,4 @@ output "subnet_self_links_by_name" {
     subnet.name => subnet.self_link
   }
 }
+##################################################################
