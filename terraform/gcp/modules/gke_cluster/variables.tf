@@ -34,3 +34,5 @@ variable "subnet_self_links" {
   description = "Map from network-subnet name to self_link"
   type        = map(string)
 }
+
+variable "service_account_email" {}

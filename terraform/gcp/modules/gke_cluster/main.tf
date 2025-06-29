@@ -23,11 +23,17 @@ resource "google_container_cluster" "gke" {
   name     = each.value.name
   location = each.value.location
 
+  deletion_protection = false
+
   initial_node_count       = each.value.initial_node_count
   remove_default_node_pool = true
 
   network    = var.vpc_self_links[each.value.network]
   subnetwork = var.subnet_self_links[each.value.subnetwork]
+
+  node_config {
+    service_account = var.service_account_email
+  }
 
   dynamic "private_cluster_config" {
     for_each = each.value.private_cluster ? [1] : []
