@@ -1,7 +1,7 @@
 ##################################################################
 provider "google" {
-  project     = local.config.project.name
-  region      = local.region
+  project = local.config.project.name
+  region  = local.region
 }
 ##################################################################
 data "google_client_config" "default" {}

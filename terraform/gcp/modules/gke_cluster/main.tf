@@ -65,8 +65,8 @@ resource "google_container_node_pool" "custom_node_pools" {
 
   node_config {
     service_account = var.service_account_email
-    machine_type = each.value.machine_type
-    disk_size_gb = lookup(each.value, "disk_size_gb", 20)
+    machine_type    = each.value.machine_type
+    disk_size_gb    = lookup(each.value, "disk_size_gb", 20)
     oauth_scopes = lookup(each.value, "oauth_scopes", [
       "https://www.googleapis.com/auth/cloud-platform"
     ])
