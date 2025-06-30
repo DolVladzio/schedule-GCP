@@ -45,9 +45,9 @@ module "static_ips" {
 module "cloudflare_dns" {
   source               = "../shared_modules/cloudflare_dns"
   cloudflare_zone_id   = var.cloudflare_zone_id
+  cloudflare_api_token = var.cloudflare_api_token
   dns_records_config   = local.config.dns_records
   resource_dns_map     = module.static_ips.ip_addresses
-  cloudflare_api_token = var.cloudflare_api_token
 }
 ##################################################################
 module "gke_cluster" {
