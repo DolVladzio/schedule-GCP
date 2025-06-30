@@ -2,7 +2,6 @@
 provider "google" {
   project     = local.config.project.name
   region      = local.region
-  credentials = file(var.gcp_credentials_file)
 }
 ##################################################################
 data "google_client_config" "default" {}

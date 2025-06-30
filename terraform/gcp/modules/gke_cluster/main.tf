@@ -64,6 +64,7 @@ resource "google_container_node_pool" "custom_node_pools" {
   cluster  = google_container_cluster.gke[each.value.cluster_key].name
 
   node_config {
+    service_account = var.service_account_email
     machine_type = each.value.machine_type
     disk_size_gb = lookup(each.value, "disk_size_gb", 20)
     oauth_scopes = lookup(each.value, "oauth_scopes", [
