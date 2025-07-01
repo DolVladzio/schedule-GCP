@@ -18,7 +18,7 @@ locals {
       name = record.name
       type = record.type
       value = (
-        lookup(record, "resolve_value", false) ? 
+        lookup(record, "resolve_value", false) ?
         lookup(var.resource_dns_map, record.value, record.value) :
         record.value
       )
