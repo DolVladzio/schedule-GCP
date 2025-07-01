@@ -1,6 +1,6 @@
 ##################################################################
 locals {
-  config = jsondecode(file("${path.module}/../../../schedule-config/config.json"))
+  config = jsondecode(file("${path.module}/../schedule-config/config.json"))
 
   fixed_region_map = {
     gcp = "europe-west3"
