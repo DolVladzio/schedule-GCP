@@ -1,7 +1,8 @@
+##################################################################
 locals {
   config = var.monitoring_config
 }
-
+##################################################################
 resource "google_logging_metric" "log_based_metrics" {
   for_each = { for m in local.config.log_based_metrics : m.name => m }
 
@@ -17,7 +18,7 @@ resource "google_logging_metric" "log_based_metrics" {
 
   label_extractors = each.value.label_extractors
 }
-
+##################################################################
 resource "google_monitoring_alert_policy" "alerts" {
   for_each = { for a in local.config.alert_policies : a.name => a }
 
@@ -52,7 +53,7 @@ resource "google_monitoring_alert_policy" "alerts" {
     google_logging_metric.log_based_metrics
   ]
 }
-
+##################################################################
 resource "google_monitoring_notification_channel" "channels" {
   for_each = {
     for ch in local.config.notification_channels : ch.name => ch
@@ -62,4 +63,4 @@ resource "google_monitoring_notification_channel" "channels" {
   type         = each.value.type
   labels       = each.value.labels
 }
-
+##################################################################

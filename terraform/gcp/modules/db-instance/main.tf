@@ -1,3 +1,4 @@
+##################################################################
 resource "google_sql_database_instance" "primary" {
   for_each         = { for db in var.databases : db.name => db }
   name             = each.value.name
@@ -30,18 +31,17 @@ resource "google_sql_database_instance" "primary" {
 
   deletion_protection = false
 }
-
-
-
+##################################################################
 resource "google_sql_database" "databases" {
   for_each = google_sql_database_instance.primary
   name     = each.key
   instance = each.value.name
 }
-
+##################################################################
 resource "google_sql_user" "users" {
   for_each = google_sql_database_instance.primary
   name     = var.db_username
   instance = google_sql_database_instance.primary[each.key].name
   password = var.db_pass
 }
+##################################################################

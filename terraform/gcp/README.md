@@ -1,15 +1,22 @@
-## Docker Image Management Script
+# Terraform GCP Infrastructure Setup
 
-This script automates the process of building, tagging, pushing, and pulling Docker images to and from Google Artifact Registry. It is specifically designed for use with Google Cloud Platform (GCP) and requires a service account with the necessary permissions.
-Run this within the directory where Dockerfile is located or add path to it.
+This project sets up a complete infrastructure on Google Cloud Platform (GCP) using Terraform. It provisions resources such as VPC networks, GKE clusters, Cloud SQL instances, static IPs, and integrates with Cloudflare DNS and Cloud Monitoring.
 
-### Usage
+---
 
-1. Ensure you have a service account key file and set the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to point to it.
-2. Run the script to build, tag, push, and pull Docker images.
+## **Project Structure**
+The configuration is organized into reusable modules for better maintainability and scalability:
+- `network`: Configures VPCs, subnets, and firewall rules.
+- `db-instance`: Provisions Cloud SQL instances.
+- `static_ips`: Allocates static IP addresses.
+- `cloudflare_dns`: Manages DNS records via Cloudflare.
+- `gke_cluster`: Deploys GKE clusters.
+- `cloud_monitoring`: Sets up monitoring configurations.
 
-```bash
-./docker-image-management.sh
-```
+---
 
-This script is only applicable for GCP and will not work with other cloud providers. 
+## **Prerequisites**
+1. **Google Cloud CLI**: Install and authenticate using `gcloud auth login`.
+2. **Terraform**: Ensure Terraform is installed and configured (`>= 1.0` recommended).
+3. **Cloudflare API Token**: Required for managing DNS records.
+4. **Config File**: A `config.json` file is required at the root level to supply input data.

@@ -1,3 +1,4 @@
+##################################################################
 terraform {
   required_providers {
     cloudflare = {
@@ -6,12 +7,11 @@ terraform {
     }
   }
 }
-
+##################################################################
 provider "cloudflare" {
   api_token = var.cloudflare_api_token
 }
-
-
+##################################################################
 locals {
   records = [
     for record in var.dns_records_config : {
@@ -27,7 +27,7 @@ locals {
     }
   ]
 }
-
+##################################################################
 resource "cloudflare_dns_record" "dns" {
   for_each = {
     for rec in local.records : rec.name => rec
@@ -40,4 +40,4 @@ resource "cloudflare_dns_record" "dns" {
   ttl     = each.value.ttl
   proxied = each.value.proxied
 }
-
+##################################################################

@@ -1,3 +1,4 @@
+##################################################################
 output "ip_addresses" {
   description = "Map of IP name to reserved address"
   value = merge(
@@ -5,7 +6,7 @@ output "ip_addresses" {
     { for k, v in google_compute_address.static_regional_ip : k => v.address }
   )
 }
-
+##################################################################
 output "ip_self_links" {
   description = "Map of IP name to self_link"
   value = merge(
@@ -13,3 +14,4 @@ output "ip_self_links" {
     { for k, v in google_compute_address.static_regional_ip : k => v.self_link }
   )
 }
+##################################################################

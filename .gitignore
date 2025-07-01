@@ -27,9 +27,7 @@ ansible/inventory/
 terraform.rc
 
 # Ignore JSON files
-config.json
-keys.json
-**/config-kuber.json
+*.json*
 # Ignore IDE files
 .idea/
 *.iml
@@ -44,3 +42,8 @@ keys.json
 # Ignore dump files
 *.dump
 terraform/gcp/modules/jenkins/jenkins-values.yaml
+
+# Ignore specific files
+*tfbase64*
+# Ignore the specific shell file
+gcp_cloud_env.sh

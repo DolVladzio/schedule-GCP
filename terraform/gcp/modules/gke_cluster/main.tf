@@ -1,3 +1,4 @@
+##################################################################
 locals {
   cluster_node_pools = flatten([
     for cluster_key, cluster in var.clusters : [
@@ -17,17 +18,23 @@ locals {
     for pool in local.cluster_node_pools : pool.pool_key => pool
   }
 }
-
+##################################################################
 resource "google_container_cluster" "gke" {
   for_each = var.clusters
   name     = each.value.name
   location = each.value.location
+
+  deletion_protection = false
 
   initial_node_count       = each.value.initial_node_count
   remove_default_node_pool = true
 
   network    = var.vpc_self_links[each.value.network]
   subnetwork = var.subnet_self_links[each.value.subnetwork]
+
+  node_config {
+    service_account = var.service_account_email
+  }
 
   dynamic "private_cluster_config" {
     for_each = each.value.private_cluster ? [1] : []
@@ -49,7 +56,7 @@ resource "google_container_cluster" "gke" {
 
   ip_allocation_policy {}
 }
-
+##################################################################
 resource "google_container_node_pool" "custom_node_pools" {
   for_each = local.node_pools_map
   name     = each.value.name
@@ -57,8 +64,9 @@ resource "google_container_node_pool" "custom_node_pools" {
   cluster  = google_container_cluster.gke[each.value.cluster_key].name
 
   node_config {
-    machine_type = each.value.machine_type
-    disk_size_gb = lookup(each.value, "disk_size_gb", 20)
+    service_account = var.service_account_email
+    machine_type    = each.value.machine_type
+    disk_size_gb    = lookup(each.value, "disk_size_gb", 20)
     oauth_scopes = lookup(each.value, "oauth_scopes", [
       "https://www.googleapis.com/auth/cloud-platform"
     ])
@@ -76,4 +84,4 @@ resource "google_container_node_pool" "custom_node_pools" {
 
   depends_on = [google_container_cluster.gke]
 }
-
+##################################################################
