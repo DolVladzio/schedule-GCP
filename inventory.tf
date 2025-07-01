@@ -15,6 +15,6 @@ locals {
 ##################################################################
 resource "local_file" "ansible_inventory" {
   content  = local.inventory
-  filename = "${path.module}/../schedule-ansible/inventory/inventory.ini"
+  filename = "${path.module}/../schedule-Ansible/inventory/inventory.ini"
 }
 ##################################################################
