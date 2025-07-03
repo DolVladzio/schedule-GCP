@@ -2,7 +2,10 @@
 locals {
   db_name = "maindb" # Default database name
 
-  inventory = templatefile("${path.module}/../inventory.tpl", {
+  inventory = templatefile("${path.module}/inventory.tpl", {
+    bastion_host = module.vm.public_ips["bastion"]
+    cloud_sql_instance = "${local.config.project.name}:${local.region}:${local.config.databases[0].name}"
+
     db_host     = module.db-instance.db_hosts[local.db_name]
     db_user     = module.db-instance.db_users[local.db_name]
     db_password = module.db-instance.db_passwords[local.db_name]
@@ -15,6 +18,6 @@ locals {
 ##################################################################
 resource "local_file" "ansible_inventory" {
   content  = local.inventory
-  filename = "${path.module}/../../ansible/inventory/inventory.ini"
+  filename = "${path.module}/../schedule-Ansible/inventory/inventory.ini"
 }
 ##################################################################

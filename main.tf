@@ -1,12 +1,15 @@
 ##################################################################
 locals {
-  config = jsondecode(file("${path.module}/../../../schedule-config/config.json"))
+  config = jsondecode(file("${path.module}/../schedule-config/config.json"))
 
   fixed_region_map = {
     gcp = "europe-west3"
   }
 
   region = local.fixed_region_map["gcp"]
+
+  ssh_keys = local.config.project.keys
+  service_account_email = local.config.project.service_account_email
 
   db_password = "password"
   db_username = "user"
@@ -37,13 +40,26 @@ module "db-instance" {
   depends_on = [module.network]
 }
 ##################################################################
+module "vm" {
+  source                = "./modules/vm"
+  project_id            = local.config.project.name
+  region                = local.region
+  project_os            = local.config.project.os
+  vm_instances          = local.config.vm_instances
+  subnet_self_links_map = module.network.subnet_self_links_by_name
+  ssh_keys              = local.ssh_keys
+  service_account_email = local.service_account_email
+  
+  depends_on            = [module.network]
+}
+##################################################################
 module "static_ips" {
   source     = "./modules/static_ips"
   static_ips = local.config.static_ips
 }
 ##################################################################
 module "cloudflare_dns" {
-  source               = "../shared_modules/cloudflare_dns"
+  source               = "git@github.com:DolVladzio/cloudflare_dns.git?ref=main"
   cloudflare_zone_id   = var.cloudflare_zone_id
   cloudflare_api_token = var.cloudflare_api_token
   dns_records_config   = local.config.dns_records
