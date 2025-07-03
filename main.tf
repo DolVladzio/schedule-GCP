@@ -8,6 +8,9 @@ locals {
 
   region = local.fixed_region_map["gcp"]
 
+  ssh_keys = local.config.project.keys
+  service_account_email = local.config.project.service_account_email
+
   db_password = "password"
   db_username = "user"
 
@@ -35,6 +38,19 @@ module "db-instance" {
   db_username       = local.db_username
 
   depends_on = [module.network]
+}
+##################################################################
+module "vm" {
+  source                = "./modules/vm"
+  project_id            = local.config.project.name
+  region                = local.region
+  project_os            = local.config.project.os
+  vm_instances          = local.config.vm_instances
+  subnet_self_links_map = module.network.subnet_self_links_by_name
+  ssh_keys              = local.ssh_keys
+  service_account_email = local.service_account_email
+  
+  depends_on            = [module.network]
 }
 ##################################################################
 module "static_ips" {
