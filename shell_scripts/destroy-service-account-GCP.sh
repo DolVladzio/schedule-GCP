@@ -46,7 +46,7 @@ delete_secret "$SECRET_NAME_DB_PASS" "$PROJECT_ID"
 if gcloud storage buckets describe "gs://${NEW_BUCKET_NAME}" \
 		--project="${PROJECT_ID}" &>/dev/null; then
     echo "=== The bucket: gs://${NEW_BUCKET_NAME} exists. Deleting it... ==="
-    if gcloud storage buckets delete "gs://${NEW_BUCKET_NAME}" \
+    if gcloud storage rm -r "gs://${NEW_BUCKET_NAME}" \
 		--project="${PROJECT_ID}"; then
         echo "=== The bucket: hs://${NEW_BUCKET_NAME} was deleted! ==="
     else
