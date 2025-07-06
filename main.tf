@@ -1,4 +1,16 @@
 ##################################################################
+data "google_secret_manager_secret_version" "db_username" {
+  secret  = local.config.project.secret_name_db_username
+  project = local.config.project.name
+  version = "latest"
+}
+
+data "google_secret_manager_secret_version" "db_password" {
+  secret  = local.config.project.secret_name_db_pass
+  project = local.config.project.name
+  version = "latest"
+}
+##################################################################
 locals {
   config = jsondecode(file("${path.module}/../schedule-config/config.json"))
 
@@ -8,11 +20,8 @@ locals {
 
   region = local.fixed_region_map["gcp"]
 
-  ssh_keys = local.config.project.keys
+  ssh_keys              = local.config.project.keys
   service_account_email = local.config.project.service_account_email
-
-  db_password = "password"
-  db_username = "user"
 
   primary_gke_key = keys(module.gke_cluster.cluster_endpoints)[0]
 }
@@ -34,8 +43,8 @@ module "db-instance" {
   databases         = local.config.databases
   private_networks  = module.network.vpc_self_links
   subnet_self_links = module.network.subnet_self_links_by_name
-  db_pass           = local.db_password
-  db_username       = local.db_username
+  db_username       = data.google_secret_manager_secret_version.db_username.secret_data
+  db_pass           = data.google_secret_manager_secret_version.db_password.secret_data
 
   depends_on = [module.network]
 }
@@ -49,8 +58,8 @@ module "vm" {
   subnet_self_links_map = module.network.subnet_self_links_by_name
   ssh_keys              = local.ssh_keys
   service_account_email = local.service_account_email
-  
-  depends_on            = [module.network]
+
+  depends_on = [module.network]
 }
 ##################################################################
 module "static_ips" {
