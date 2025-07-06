@@ -19,8 +19,8 @@ ARTIFACT_REGISTRY_GCP_DESCRIPTION="The artifact registry for the docker images"
 # Secrets
 SECRET_NAME_DB_USERNAME=$(grep -oP '"secret_name_db_username":\s*"\K[^"]+' "$CONFIG_PATH")
 SECRET_NAME_DB_PASS=$(grep -oP '"secret_name_db_pass":\s*"\K[^"]+' "$CONFIG_PATH")
-DB_USERNAME=postgres
-DB_PASS=postgres
+DB_PASS=$(grep -oP '"db_pass":\s*"\K[^"]+' "$CONFIG_PATH")
+DB_USERNAME=$(grep -oP '"db_user":\s*"\K[^"]+' "$CONFIG_PATH")
 #########################################################################
 if [[ -z "$PROJECT_ID" ]]; then
 	echo "=== Error: Unable to retrieve GCP project ID. Use 'gcloud config set project YOUR_PROJECT_ID' ==="
