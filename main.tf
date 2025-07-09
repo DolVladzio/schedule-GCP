@@ -108,8 +108,9 @@ module "cloud_monitoring" {
 }
 ##################################################################
 module "inventory" {
-  source    = "./modules/inventory"
-  inventory = local.inventory
+  source              = "./modules/inventory"
+  inventory           = local.inventory
+  ansible_bucket_name = local.config.project.ansible_bucket_name
 
   depends_on = [
     "module.static_ips",
