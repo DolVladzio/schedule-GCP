@@ -30,7 +30,7 @@ jobs:
 
       - name: Clone another repo
         run: |
-          git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/DolVladzio/schedule-config.git
+          git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/DolVladzio/schedule-config.git ../schedule-config
 
       - name: Add SSH key
         run: |
@@ -54,6 +54,5 @@ jobs:
         run: |
           terraform apply \
             --auto-approve \
-            -target=module.network \
             -var "cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
             -var "cloudflare_zone_id=${{ secrets.CLOUDFLARE_ZONE_ID }}"
