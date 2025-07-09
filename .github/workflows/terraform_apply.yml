@@ -28,10 +28,6 @@ jobs:
         with:
           credentials_json: '${{ secrets.GCP_KEY  }}'
 
-      - name: Set the GCP project
-        run: |
-          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
-
       - name: Clone another repo
         run: |
           git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/DolVladzio/schedule-config.git ../schedule-config
