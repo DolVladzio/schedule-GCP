@@ -1,17 +1,14 @@
-name: "Apply The Terraform Module: Network"
+name: "Apply The Terraform Modules"
 
 on:
   push:
     branches: [ dev ]
   workflow_dispatch:
-  repository_dispatch:
-    types: [ terraform_network ]
 
 jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
-    environment: production
 
     defaults:
       run:
@@ -35,16 +32,9 @@ jobs:
         run: |
           git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/DolVladzio/schedule-config.git
 
-      - name: Add SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-
       - name: Terraform Init
         run: terraform init -backend-config="bucket=${{ secrets.TF_STATE_BUCKET_NAME }}"
 
-      # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
         run: terraform fmt -check
 
@@ -54,5 +44,10 @@ jobs:
             -var "cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
             -var "cloudflare_zone_id=${{ secrets.CLOUDFLARE_ZONE_ID }}"
 
-      # - name: Terraform Apply
-      #   run: terraform apply -auto-approve -input=false
+      - name: Terraform Apply
+        run: |
+          terraform apply \
+            --auto-approve \
+            -target=module.network \
+            -var "cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -var "cloudflare_zone_id=${{ secrets.CLOUDFLARE_ZONE_ID }}"
