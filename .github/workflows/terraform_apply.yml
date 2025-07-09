@@ -2,7 +2,7 @@ name: "Apply The Terraform Modules"
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
