@@ -59,4 +59,4 @@ jobs:
 
       - name: The inventory.ini file into the GCP bucket
         run: |
-          gsutil cp inventory/inventory.ini gs://inventory_file/inventory.ini
+          gsutil cp inventory/inventory.ini gs://${{ secrets.ANSBILE_BUCKET_NAME }}/inventory.ini
