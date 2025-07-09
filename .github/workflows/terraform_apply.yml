@@ -56,7 +56,3 @@ jobs:
             --auto-approve \
             -var "cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
             -var "cloudflare_zone_id=${{ secrets.CLOUDFLARE_ZONE_ID }}"
-
-      - name: The inventory.ini file into the GCP bucket
-        run: |
-          gsutil cp inventory/inventory.ini gs://${{ secrets.ANSBILE_BUCKET_NAME }}/inventory.ini
