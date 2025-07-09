@@ -33,7 +33,7 @@ jobs:
 
       - name: Clone another repo
         run: |
-          git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/DolVladzio/schedule-Ansible.git
+          git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/DolVladzio/schedule-config.git
 
       - name: Add SSH key
         run: |
