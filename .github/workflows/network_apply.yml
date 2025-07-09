@@ -31,6 +31,10 @@ jobs:
         with:
           credentials_json: '${{ secrets.GCP_KEY  }}'
 
+      - name: Clone another repo
+        run: |
+          git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/DolVladzio/schedule-Ansible.git
+
       - name: Add SSH key
         run: |
           mkdir -p ~/.ssh
