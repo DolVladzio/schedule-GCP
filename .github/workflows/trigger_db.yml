@@ -5,6 +5,10 @@ on:
     paths:
       - modules/db-instance/**
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Apply The Terraform Modules"]
+    types:
+      - completed
 
 jobs:
   terraform:
