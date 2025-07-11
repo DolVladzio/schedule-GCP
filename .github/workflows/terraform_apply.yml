@@ -2,7 +2,7 @@ name: "Apply The Terraform Modules"
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dev ]
   workflow_dispatch:
 
 jobs:
@@ -56,3 +56,10 @@ jobs:
             --auto-approve \
             -var "cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
             -var "cloudflare_zone_id=${{ secrets.CLOUDFLARE_ZONE_ID }}"
+
+      - name: Trigger the Ansible DB's playbook
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          repository: DolVladzio/schedule-Ansible
+          event-type: restore_db
