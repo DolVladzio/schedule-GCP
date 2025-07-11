@@ -10,6 +10,10 @@ resource "google_storage_bucket_object" "inventory_ini" {
   source       = "${path.module}/../../inventory/inventory.ini"
   content_type = "text/plain"
 
+  metadata = {
+    last_updated = timestamp()
+  }
+
   depends_on = [
     local_file.ansible_inventory
   ]

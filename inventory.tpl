@@ -9,10 +9,8 @@ db_password=${db_password}
 db_port=${db_port}
 db_name=${db_name}
 cloud_sql_instance=${cloud_sql_instance}
-
 %{ for name, ip in static_ips }
 ${name}=${ip}
 %{ endfor }
-
 [bastion_host]
 bastion ansible_host=${bastion_host}
