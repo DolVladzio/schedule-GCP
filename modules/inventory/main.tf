@@ -1,4 +1,8 @@
 ##################################################################
+locals {
+  inventory_hash = filesha256("${path.module}/../../inventory/inventory.ini")
+}
+##################################################################
 resource "local_file" "ansible_inventory" {
   content  = var.inventory
   filename = "${path.module}/../../inventory/inventory.ini"
@@ -10,8 +14,8 @@ resource "google_storage_bucket_object" "inventory_ini" {
   source       = "${path.module}/../../inventory/inventory.ini"
   content_type = "text/plain"
 
-  lifecycle {
-    replace_triggered_by = [filesha256("${path.module}/../../inventory/inventory.ini")]
+  metadata = {
+    file_hash = local.inventory_hash
   }
 
   depends_on = [
