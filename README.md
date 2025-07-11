@@ -2,6 +2,8 @@
 
 Terraform infrastrucutre - [![Apply The Terraform Modules](https://github.com/DolVladzio/schedule-GCP/actions/workflows/terraform_apply.yml/badge.svg?branch=main)](https://github.com/DolVladzio/schedule-GCP/actions/workflows/terraform_apply.yml)
 
+Trigger DB's workflow - [![Trigger the Ansible DB's workflow](https://github.com/DolVladzio/schedule-GCP/actions/workflows/trigger_db.yml/badge.svg?branch=main)](https://github.com/DolVladzio/schedule-GCP/actions/workflows/trigger_db.yml)
+
 This project sets up a complete infrastructure on Google Cloud Platform (GCP) using Terraform. It provisions resources such as VPC networks, GKE clusters, Cloud SQL instances, static IPs, and integrates with Cloudflare DNS and Cloud Monitoring.
 
 ---
