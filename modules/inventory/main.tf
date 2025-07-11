@@ -10,6 +10,10 @@ resource "google_storage_bucket_object" "inventory_ini" {
   source       = "${path.module}/../../inventory/inventory.ini"
   content_type = "text/plain"
 
+  lifecycle {
+    replace_triggered_by = [filesha256("${path.module}/../../inventory/inventory.ini")]
+  }
+
   depends_on = [
     local_file.ansible_inventory
   ]
