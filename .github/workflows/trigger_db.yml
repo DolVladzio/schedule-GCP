@@ -1,0 +1,27 @@
+name: Trigger the Ansible DB's workflow
+
+on:
+  push:
+    paths:
+      - modules/db-instance/**
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Trigger the Ansible DB's playbook
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          repository: DolVladzio/schedule-Ansible
+          event-type: restore_db
