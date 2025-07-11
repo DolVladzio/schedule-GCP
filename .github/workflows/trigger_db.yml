@@ -1,29 +1,30 @@
 name: Trigger the Ansible DB's workflow
 
 on:
-  push:
-    paths:
-      - modules/db-instance/**
-  workflow_dispatch:
   workflow_run:
     workflows: ["Apply The Terraform Modules"]
     types:
       - completed
 
 jobs:
-  terraform:
-    name: 'Terraform'
+  db-instance:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        shell: bash
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          base: ${{ github.event.workflow_run.head_sha }}^
+          ref: ${{ github.event.workflow_run.head_sha }}
+          filters: |
+            db-instance:
+              - 'modules/db-instance/**'
 
       - name: Trigger the Ansible DB's playbook
+        if: steps.filter.outputs.db-instance == 'true'
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
