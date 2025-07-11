@@ -19,7 +19,7 @@ resource "google_sql_database_instance" "primary" {
 
     backup_configuration {
       enabled                        = true
-      start_time                     = "20:55"
+      start_time                     = "20:50"
       point_in_time_recovery_enabled = true
     }
 
