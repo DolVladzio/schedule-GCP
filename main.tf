@@ -84,8 +84,8 @@ module "static_ips" {
 ##################################################################
 module "cloudflare_dns" {
   source               = "git@github.com:DolVladzio/cloudflare_dns.git?ref=main"
-  cloudflare_zone_id   = var.cloudflare_zone_id
-  cloudflare_api_token = var.cloudflare_api_token
+  cloudflare_api_token = local.config.project.cloudflare_api_token
+  cloudflare_zone_id   = local.config.project.cloudflare_zone_id
   dns_records_config   = local.config.dns_records
   resource_dns_map     = module.static_ips.ip_addresses
 }

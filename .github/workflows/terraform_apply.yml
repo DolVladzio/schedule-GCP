@@ -48,13 +48,8 @@ jobs:
 
       - name: Terraform Plan
         run: |
-          terraform plan \
-            -var "cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-            -var "cloudflare_zone_id=${{ secrets.CLOUDFLARE_ZONE_ID }}"
+          terraform plan
 
       - name: Terraform Apply
         run: |
-          terraform apply \
-            --auto-approve \
-            -var "cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-            -var "cloudflare_zone_id=${{ secrets.CLOUDFLARE_ZONE_ID }}"
+          terraform apply --auto-approve
