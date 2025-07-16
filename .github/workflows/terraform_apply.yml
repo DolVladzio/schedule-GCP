@@ -32,7 +32,7 @@ jobs:
 
       - name: Clone another repo
         run: |
-          git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/DolVladzio/schedule-config.git ../schedule-config
+          git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/DolVladzio/schedule-terraform-config.git ../schedule-terraform-config
 
       - name: Add SSH key
         run: |
