@@ -1,4 +1,4 @@
-name: Apply The Terraform Modules
+name: "Dev: Apply The Terraform Modules"
 
 on:
   push:
