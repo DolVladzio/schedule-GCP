@@ -26,6 +26,11 @@ resource "google_compute_instance" "vm" {
     }
   }
 
+  shielded_instance_config {
+    enable_vtpm        = each.value.enable_vtpm
+    enable_secure_boot = each.value.enable_secure_boot
+  }
+
   network_interface {
     subnetwork = lookup(var.subnet_self_links_map, each.value.subnet)
 
@@ -36,6 +41,7 @@ resource "google_compute_instance" "vm" {
   }
 
   metadata = {
+    block-project-ssh-keys = "${each.value.block-project-ssh-keys}"
     startup-script = templatefile("${path.root}/shell_scripts/metadata.sh", {
       ssh_keys = join("\n", var.ssh_keys)
     })
