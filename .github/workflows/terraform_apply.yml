@@ -1,11 +1,11 @@
-name: "Dev: Apply The Terraform Modules"
+name: Apply The Terraform Modules
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ main ]
   workflow_dispatch:
   repository_dispatch:
-    types: [ apply-infra_dev ]
+    types: [ apply-infra ]
 
 jobs:
   terraform:
@@ -49,3 +49,7 @@ jobs:
       - name: Terraform Plan
         run: |
           terraform plan
+
+      - name: Terraform Apply
+        run: |
+          terraform apply --auto-approve
