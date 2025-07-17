@@ -20,6 +20,9 @@ variable "networks" {
       public = bool
       zone   = string
     }))
+    aggregation_interval = string
+    flow_sampling        = number
+    metadata             = string
   }))
   description = "List of subnets with name, cidr, and whether public"
 }
@@ -43,11 +46,6 @@ variable "security_groups" {
       port     = number
       source   = string
     }))
-    # egress = list(object({
-    #   protocol    = string
-    #   port        = number
-    #   destination = string
-    # }))
   }))
   description = "Firewall definitions mapping tags → ingress/egress rules"
 }

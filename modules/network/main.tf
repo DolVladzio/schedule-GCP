@@ -28,9 +28,12 @@ resource "google_compute_subnetwork" "subnet" {
     for subnet in flatten([
       for network in var.networks : [
         for subnet in network.subnets : {
-          key          = "${network.name}-${subnet.name}"
-          network_name = network.name
-          subnet_data  = subnet
+          key                  = "${network.name}-${subnet.name}"
+          network_name         = network.name
+          subnet_data          = subnet
+          aggregation_interval = network.aggregation_interval
+          flow_sampling        = network.flow_sampling
+          metadata             = network.metadata
         }
       ]
     ]) : subnet.key => subnet
@@ -40,6 +43,12 @@ resource "google_compute_subnetwork" "subnet" {
   ip_cidr_range = each.value.subnet_data.cidr
   region        = var.region
   network       = google_compute_network.vpc[each.value.network_name].id
+
+  log_config {
+    aggregation_interval = each.value.aggregation_interval
+    flow_sampling        = each.value.flow_sampling
+    metadata             = each.value.metadata
+  }
 
   depends_on = [google_compute_network.vpc]
 }
