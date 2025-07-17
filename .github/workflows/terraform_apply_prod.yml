@@ -5,7 +5,7 @@ on:
     branches: [ main ]
   workflow_dispatch:
   repository_dispatch:
-    types: [ apply-infra ]
+    types: [ apply-infra_prod ]
 
 jobs:
   terraform:
