@@ -24,6 +24,10 @@ resource "google_container_cluster" "gke" {
   name     = each.value.name
   location = each.value.location
 
+  network_policy {
+    enabled = true
+  }
+
   deletion_protection = false
 
   initial_node_count       = each.value.initial_node_count
@@ -65,11 +69,15 @@ resource "google_container_node_pool" "custom_node_pools" {
 
   node_config {
     service_account = var.service_account_email
-    machine_type    = each.value.machine_type
+    machine_type    = lookup(each.value, "machine_type", "e2-medium")
+    image_type      = lookup(each.value, "image_type", "COS")
     disk_size_gb    = lookup(each.value, "disk_size_gb", 20)
     oauth_scopes = lookup(each.value, "oauth_scopes", [
       "https://www.googleapis.com/auth/cloud-platform"
     ])
+    workload_metadata_config {
+      mode = lookup(each.value, "workload_metadata_config", "GKE_METADATA")
+    }
   }
 
   autoscaling {
