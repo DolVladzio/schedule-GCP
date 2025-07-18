@@ -16,18 +16,20 @@ variable "project_os" {
 ##################################################################
 variable "vm_instances" {
   type = list(object({
-    name                   = string
-    network                = string
-    size                   = string
-    zone                   = string
-    subnet                 = string
-    public_ip              = bool
-    enable_vtpm            = bool
-    enable_secure_boot     = bool
-    block-project-ssh-keys = bool
+    name                      = string
+    network                   = string
+    size                      = string
+    zone                      = string
+    subnet                    = string
+    public_ip                 = bool
+    enable_vtpm               = bool
+    enable_secure_boot        = bool
+    block-project-ssh-keys    = bool
     allow_stopping_for_update = bool
-    tags                   = set(string)
-    security_groups        = optional(list(string), [])
+    key_ring_name             = string
+    crypto_key_name           = string
+    tags                      = set(string)
+    security_groups           = optional(list(string), [])
   }))
   description = "List of VMs (from config.json)"
 }

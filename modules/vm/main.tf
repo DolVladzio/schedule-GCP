@@ -24,6 +24,7 @@ resource "google_compute_instance" "vm" {
     initialize_params {
       image = lookup(local.os_map, var.project_os, local.os_map["ubuntu"])
     }
+    kms_key_self_link = "projects/${var.project_id}/locations/${var.region}/keyRings/${each.value.key_ring_name}/cryptoKeys/${each.value.crypto_key_name}"
   }
 
   shielded_instance_config {
