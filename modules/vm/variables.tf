@@ -25,6 +25,7 @@ variable "vm_instances" {
     enable_vtpm            = bool
     enable_secure_boot     = bool
     block-project-ssh-keys = bool
+    allow_stopping_for_update = bool
     tags                   = set(string)
     security_groups        = optional(list(string), [])
   }))

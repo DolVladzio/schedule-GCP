@@ -31,6 +31,8 @@ resource "google_compute_instance" "vm" {
     enable_secure_boot = each.value.enable_secure_boot
   }
 
+  allow_stopping_for_update = each.value.allow_stopping_for_update
+
   network_interface {
     subnetwork = lookup(var.subnet_self_links_map, each.value.subnet)
 
