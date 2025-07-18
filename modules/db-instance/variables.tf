@@ -8,7 +8,7 @@ variable "databases" {
     version              = string
     size                 = string
     database_flags_name  = string
-    database_flags_value = number
+    database_flags_value = string
     zone                 = list(string)
     subnets              = list(string)
     port                 = number

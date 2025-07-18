@@ -11,7 +11,7 @@ resource "google_sql_database_instance" "primary" {
 
     database_flags {
       name  = each.value.database_flags_name
-      value = lookup(each.value, "database_flags_value", 0)
+      value = "${lookup(each.value, "database_flags_value", 0)}"
     }
 
     dynamic "location_preference" {
