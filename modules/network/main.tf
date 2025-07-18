@@ -11,18 +11,15 @@ locals {
     }
   }
 
-  # Create a map of security group name to the instances it's attached to
   sg_to_instances_map = { for sg in var.security_groups : sg.name => sg.attach_to }
 }
 ##################################################################
-# 1) Create VPCs for each network
 resource "google_compute_network" "vpc" {
   for_each                = local.vpcs_map
   name                    = lookup(each.value, "name", "k8s-vpc")
   auto_create_subnetworks = false
 }
 ##################################################################
-# 2) Regional subnets for each network
 resource "google_compute_subnetwork" "subnet" {
   for_each = {
     for subnet in flatten([
@@ -73,14 +70,12 @@ resource "google_compute_firewall" "ingress" {
 
   depends_on = [google_compute_network.vpc]
 
-  # Handle source ranges properly - either use CIDR from ACLs or default to 0.0.0.0/0
   source_ranges = distinct(flatten([
     for rule in each.value.ingress :
     contains(keys(local.acls_map), rule.source) ? [local.acls_map[rule.source]] : ["0.0.0.0/0"]
     if !contains(keys(local.sg_to_instances_map), rule.source)
   ]))
 
-  # Handle source tags when source is another security group
   source_tags = distinct(flatten([
     for rule in each.value.ingress :
     contains(keys(local.sg_to_instances_map), rule.source) ? local.sg_to_instances_map[rule.source] : []
