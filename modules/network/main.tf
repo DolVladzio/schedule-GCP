@@ -6,8 +6,15 @@ locals {
   psa_ranges_map = {
     for net in var.networks :
     net.name => {
-      name = "psa-range-${net.name}"
-      cidr = "${net.psa_range}"
+      name                    = "psa-range-${net.name}"
+      cidr                    = "${net.psa_range}"
+      ip_version              = net.ip_version
+      prefix_length           = net.prefix_length
+      address_type            = net.address_type
+      purpose                 = net.purpose
+      service                 = net.service
+      update_on_creation_fail = net.update_on_creation_fail
+      deletion_policy         = net.deletion_policy
     }
   }
 
