@@ -26,8 +26,6 @@ variable "vm_instances" {
     enable_secure_boot        = bool
     block-project-ssh-keys    = bool
     allow_stopping_for_update = bool
-    key_ring_name             = string
-    crypto_key_name           = string
     tags                      = set(string)
     security_groups           = optional(list(string), [])
   }))
