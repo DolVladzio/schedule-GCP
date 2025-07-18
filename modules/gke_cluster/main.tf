@@ -24,10 +24,6 @@ resource "google_container_cluster" "gke" {
   name     = each.value.name
   location = each.value.location
 
-  network_policy {
-    enabled = true
-  }
-
   deletion_protection = false
 
   initial_node_count       = each.value.initial_node_count
