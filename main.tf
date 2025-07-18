@@ -106,6 +106,7 @@ module "inventory" {
   source              = "./modules/inventory"
   inventory           = local.inventory
   ansible_bucket_name = local.config.project.ansible_bucket_name
+  inventory_info      = local.config.inventory_info
 
   depends_on = [
     "module.static_ips",

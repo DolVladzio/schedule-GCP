@@ -5,10 +5,11 @@ resource "local_file" "ansible_inventory" {
 }
 ##################################################################
 resource "google_storage_bucket_object" "inventory_ini" {
-  name         = "inventory.ini"
+  for_each     = { for inventory in var.inventory_info : inventory.name => inventory }
+  name         = each.value.name
   bucket       = var.ansible_bucket_name
   source       = "${path.module}/../../inventory/inventory.ini"
-  content_type = "text/plain"
+  content_type = each.value.content_type
 
   metadata = {
     last_updated = timestamp()
