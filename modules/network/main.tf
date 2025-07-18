@@ -150,11 +150,11 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 
   provider                = google-beta
   network                 = google_compute_network.vpc[each.key].self_link
-  service                 = "servicenetworking.googleapis.com"
+  service                 = each.value.service
   reserved_peering_ranges = [google_compute_global_address.default[each.key].name]
-  update_on_creation_fail = true
+  update_on_creation_fail = each.value.update_on_creation_fail
 
-  deletion_policy = "ABANDON"
+  deletion_policy = each.value.deletion_policy
 
   depends_on = [google_compute_network.vpc]
 }

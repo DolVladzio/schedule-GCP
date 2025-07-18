@@ -20,6 +20,9 @@ variable "networks" {
     prefix_length                      = number
     address_type                       = string
     purpose                            = string
+    service                            = string
+    update_on_creation_fail            = bool
+    deletion_policy                    = string
     subnets = list(object({
       name   = string
       cidr   = string
