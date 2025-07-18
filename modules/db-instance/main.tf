@@ -9,9 +9,12 @@ resource "google_sql_database_instance" "primary" {
     tier              = "db-g1-${each.value.size}"
     availability_type = each.value.secondary_zone != null ? "REGIONAL" : "ZONAL"
 
-    database_flags {
-      name  = each.value.database_flags_name
-      value = "${lookup(each.value, "database_flags_value", 0)}"
+    dynamic "database_flags" {
+      for_each = each.value.database_flags
+      content {
+        name  = database_flags.value.name
+        value = database_flags.value.value
+      }
     }
 
     dynamic "location_preference" {
@@ -22,10 +25,13 @@ resource "google_sql_database_instance" "primary" {
       }
     }
 
-    backup_configuration {
-      enabled                        = true
-      start_time                     = "20:50"
-      point_in_time_recovery_enabled = true
+    dynamic "backup_configuration" {
+      for_each = each.value.backup_configuration
+      content {
+        enabled                        = backup_configuration.value.enabled
+        start_time                     = backup_configuration.value.start_time
+        point_in_time_recovery_enabled = backup_configuration.value.point_in_time_recovery_enabled
+      }
     }
 
     ip_configuration {
