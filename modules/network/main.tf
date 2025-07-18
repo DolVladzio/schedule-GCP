@@ -136,10 +136,10 @@ resource "google_compute_global_address" "default" {
   name          = each.value.name
   project       = var.project_id
   provider      = google-beta
-  ip_version    = "IPV4"
-  prefix_length = 16
-  address_type  = "INTERNAL"
-  purpose       = "VPC_PEERING"
+  ip_version    = each.value.ip_version
+  prefix_length = each.value.prefix_length
+  address_type  = each.value.address_type
+  purpose       = each.value.purpose
   network       = google_compute_network.vpc[each.key].self_link
 
   depends_on = [google_compute_network.vpc]

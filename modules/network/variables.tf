@@ -16,6 +16,10 @@ variable "networks" {
     psa_range                          = string
     nat_ip_allocate_option             = string
     source_subnetwork_ip_ranges_to_nat = string
+    ip_version                         = string
+    prefix_length                      = number
+    address_type                       = string
+    purpose                            = string
     subnets = list(object({
       name   = string
       cidr   = string
