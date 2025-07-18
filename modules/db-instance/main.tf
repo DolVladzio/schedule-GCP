@@ -9,6 +9,11 @@ resource "google_sql_database_instance" "primary" {
     tier              = "db-g1-${each.value.size}"
     availability_type = each.value.secondary_zone != null ? "REGIONAL" : "ZONAL"
 
+    database_flags {
+      name  = each.value.database_flags_name
+      value = lookup(each.value, "database_flags_value", 0)
+    }
+
     dynamic "location_preference" {
       for_each = [1]
       content {

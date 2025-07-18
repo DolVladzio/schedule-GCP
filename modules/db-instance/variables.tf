@@ -2,17 +2,19 @@
 variable "databases" {
   description = "List of database configurations"
   type = list(object({
-    name            = string
-    network         = string
-    type            = string
-    version         = string
-    size            = string
-    zone            = list(string)
-    subnets         = list(string)
-    port            = number
-    security_groups = list(string)
-    region          = optional(string)
-    secondary_zone  = optional(string)
+    name                 = string
+    network              = string
+    type                 = string
+    version              = string
+    size                 = string
+    database_flags_name  = string
+    database_flags_value = number
+    zone                 = list(string)
+    subnets              = list(string)
+    port                 = number
+    security_groups      = list(string)
+    region               = optional(string)
+    secondary_zone       = optional(string)
   }))
 }
 ##################################################################

@@ -14,11 +14,7 @@ data "google_secret_manager_secret_version" "db_password" {
 locals {
   config = jsondecode(file("${path.module}/../schedule-terraform-config/terraform.json"))
 
-  fixed_region_map = {
-    gcp = "europe-west3"
-  }
-
-  region = local.fixed_region_map["gcp"]
+  region = local.config.project.region
 
   ssh_keys              = local.config.project.keys
   service_account_email = local.config.project.service_account_email
