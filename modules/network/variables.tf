@@ -11,9 +11,11 @@ variable "region" {
 ##################################################################
 variable "networks" {
   type = list(object({
-    name      = string
-    vpc_cidr  = string
-    psa_range = string
+    name                               = string
+    vpc_cidr                           = string
+    psa_range                          = string
+    nat_ip_allocate_option             = string
+    source_subnetwork_ip_ranges_to_nat = string
     subnets = list(object({
       name   = string
       cidr   = string
