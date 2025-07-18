@@ -1,13 +1,28 @@
-# Database Instance Module
+# 🗄️ GCP Cloud SQL Module
 
-This module creates a database instance on Google Cloud Platform (GCP).
+This Terraform module provisions Google Cloud **SQL instances**, **databases**, and **users**, so you can have a database party 🎉 with the least amount of manual clicking.
 
-## Inputs
-- `project_id`: The ID of the GCP project.
-- `region`: The region where the database instance will be created.
-- `databases`: Configuration for the databases to be created.
-- `private_networks`: Private networks for the database instance.
-- `subnet_self_links`: Subnet self-links for the database instance.
+---
 
-## Outputs
-- `instance_connection_name`: The connection name of the created database instance. 
+## 🚀 Features
+
+✅ Create **Cloud SQL Instances** (`google_sql_database_instance`)  
+✅ Create one or more **Databases** inside the instance (`google_sql_database`)  
+✅ Create one or more **Users** for access control (`google_sql_user`)  
+✅ Supports regional or zonal deployments  
+✅ Configurable flags, backups, SSL, and private networking  
+
+---
+
+## 🗂️ Resources
+
+### 🖥️ `google_sql_database_instance`
+Creates the Cloud SQL instance itself, with options to configure machine tier, region, high availability, backups, maintenance windows, IP configuration, and more.
+
+### 📂 `google_sql_database`
+Creates one or more logical databases in your Cloud SQL instance.
+
+### 👤 `google_sql_user`
+Creates users in the instance with specific usernames and passwords, ready to connect to your DBs.
+
+---
