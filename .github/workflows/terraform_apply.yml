@@ -38,8 +38,18 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
+      - name: Set dev STATE_BUCKET_NAME to payload value
+        if: github.event.client_payload.environment == 'dev'
+        run: |
+          echo "STATE_BUCKET_NAME=${{ github.event.client_payload.environment }}" >> $GITHUB_ENV
+
+      - name: Set prod STATE_BUCKET_NAME to payload value
+        if: github.event.client_payload.environment == 'prod'
+        run: |
+          echo "STATE_BUCKET_NAME=${{ github.event.client_payload.environment }}" >> $GITHUB_ENV
+
       - name: Terraform Init
-        run: terraform init -backend-config="bucket=${{ secrets.TF_STATE_BUCKET_NAME }}"
+        run: terraform init -backend-config="bucket=${{ env.STATE_BUCKET_NAME }}"
 
       - name: Terraform Format
         run: terraform fmt -check
