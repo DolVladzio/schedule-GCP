@@ -14,3 +14,8 @@ output "subnet_self_links_by_name" {
   value       = module.network.subnet_self_links_by_name
 }
 ##################################################################
+output "ip_addresses" {
+  description = "Map of subnets"
+  value       = module.static_ips.ip_addresses
+}
+##################################################################

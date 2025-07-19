@@ -82,13 +82,14 @@ module "static_ips" {
   static_ips  = local.config.static_ips
 }
 ##################################################################
-# module "cloudflare_dns" {
-#   source               = "git@github.com:DolVladzio/cloudflare_dns.git?ref=main"
-#   cloudflare_api_token = local.config.project.cloudflare_api_token
-#   dns_records_config   = local.config.dns_records
-#   resource_dns_map     = module.static_ips.ip_addresses
-# }
-# ##################################################################
+module "cloudflare_dns" {
+  source               = "git@github.com:DolVladzio/cloudflare_dns.git?ref=main"
+  environment          = var.environment
+  cloudflare_api_token = local.config.project.cloudflare_api_token
+  dns_records_config   = local.config.dns_records
+  resource_dns_map     = module.static_ips.ip_addresses
+}
+##################################################################
 # module "gke_cluster" {
 #   source                = "./modules/gke_cluster"
 #   clusters              = local.config.gke_clusters
@@ -98,14 +99,14 @@ module "static_ips" {
 
 #   depends_on = [module.network]
 # }
-# ##################################################################
+##################################################################
 # module "cloud_monitoring" {
 #   source            = "./modules/cloud_monitoring"
 #   monitoring_config = local.config.monitoring
 
 #   depends_on = [module.gke_cluster]
 # }
-# ##################################################################
+##################################################################
 # module "inventory" {
 #   source              = "./modules/inventory"
 #   inventory           = local.inventory
