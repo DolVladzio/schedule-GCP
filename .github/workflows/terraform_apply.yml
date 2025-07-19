@@ -3,7 +3,7 @@ name: Apply The Terraform Modules
 on:
   workflow_dispatch:
   repository_dispatch:
-    types: [ apply-infra ]
+    types: [ apply-infra-dev, apply-infra-prod ]
 
 jobs:
   terraform:
