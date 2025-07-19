@@ -14,7 +14,7 @@ data "google_secret_manager_secret_version" "db_password" {
 locals {
   config = jsondecode(file("${path.module}/../schedule-terraform-config/terraform.json"))
 
-  region = local.config.project.region
+  region = local.config.project.region[var.environment]
 
   ssh_keys              = local.config.project.keys
   service_account_email = local.config.project.service_account_email
@@ -47,71 +47,71 @@ module "network" {
   health_check_port = var.health_check_port
 }
 ##################################################################
-module "db-instance" {
-  source            = "./modules/db-instance"
-  project_id        = local.config.project.name
-  region            = local.region
-  databases         = local.config.databases
-  private_networks  = module.network.vpc_self_links
-  subnet_self_links = module.network.subnet_self_links_by_name
-  db_username       = data.google_secret_manager_secret_version.db_username.secret_data
-  db_pass           = data.google_secret_manager_secret_version.db_password.secret_data
+# module "db-instance" {
+#   source            = "./modules/db-instance"
+#   project_id        = local.config.project.name
+#   region            = local.region
+#   databases         = local.config.databases
+#   private_networks  = module.network.vpc_self_links
+#   subnet_self_links = module.network.subnet_self_links_by_name
+#   db_username       = data.google_secret_manager_secret_version.db_username.secret_data
+#   db_pass           = data.google_secret_manager_secret_version.db_password.secret_data
 
-  depends_on = [module.network]
-}
-##################################################################
-module "vm" {
-  source                = "./modules/vm"
-  project_id            = local.config.project.name
-  region                = local.region
-  project_os            = local.config.project.os
-  vm_instances          = local.config.vm_instances
-  subnet_self_links_map = module.network.subnet_self_links_by_name
-  ssh_keys              = local.ssh_keys
-  service_account_email = local.service_account_email
+#   depends_on = [module.network]
+# }
+# ##################################################################
+# module "vm" {
+#   source                = "./modules/vm"
+#   project_id            = local.config.project.name
+#   region                = local.region
+#   project_os            = local.config.project.os
+#   vm_instances          = local.config.vm_instances
+#   subnet_self_links_map = module.network.subnet_self_links_by_name
+#   ssh_keys              = local.ssh_keys
+#   service_account_email = local.service_account_email
 
-  depends_on = [module.network]
-}
-##################################################################
-module "static_ips" {
-  source     = "./modules/static_ips"
-  static_ips = local.config.static_ips
-}
-##################################################################
-module "cloudflare_dns" {
-  source               = "git@github.com:DolVladzio/cloudflare_dns.git?ref=main"
-  cloudflare_api_token = local.config.project.cloudflare_api_token
-  dns_records_config   = local.config.dns_records
-  resource_dns_map     = module.static_ips.ip_addresses
-}
-##################################################################
-module "gke_cluster" {
-  source                = "./modules/gke_cluster"
-  clusters              = local.config.gke_clusters
-  vpc_self_links        = module.network.vpc_self_links
-  subnet_self_links     = module.network.subnet_self_links_by_name
-  service_account_email = local.config.project.service_account_email
+#   depends_on = [module.network]
+# }
+# ##################################################################
+# module "static_ips" {
+#   source     = "./modules/static_ips"
+#   static_ips = local.config.static_ips
+# }
+# ##################################################################
+# module "cloudflare_dns" {
+#   source               = "git@github.com:DolVladzio/cloudflare_dns.git?ref=main"
+#   cloudflare_api_token = local.config.project.cloudflare_api_token
+#   dns_records_config   = local.config.dns_records
+#   resource_dns_map     = module.static_ips.ip_addresses
+# }
+# ##################################################################
+# module "gke_cluster" {
+#   source                = "./modules/gke_cluster"
+#   clusters              = local.config.gke_clusters
+#   vpc_self_links        = module.network.vpc_self_links
+#   subnet_self_links     = module.network.subnet_self_links_by_name
+#   service_account_email = local.config.project.service_account_email
 
-  depends_on = [module.network]
-}
-##################################################################
-module "cloud_monitoring" {
-  source            = "./modules/cloud_monitoring"
-  monitoring_config = local.config.monitoring
+#   depends_on = [module.network]
+# }
+# ##################################################################
+# module "cloud_monitoring" {
+#   source            = "./modules/cloud_monitoring"
+#   monitoring_config = local.config.monitoring
 
-  depends_on = [module.gke_cluster]
-}
-##################################################################
-module "inventory" {
-  source              = "./modules/inventory"
-  inventory           = local.inventory
-  ansible_bucket_name = local.config.project.ansible_bucket_name
-  inventory_info      = local.config.inventory_info
+#   depends_on = [module.gke_cluster]
+# }
+# ##################################################################
+# module "inventory" {
+#   source              = "./modules/inventory"
+#   inventory           = local.inventory
+#   ansible_bucket_name = local.config.project.ansible_bucket_name
+#   inventory_info      = local.config.inventory_info
 
-  depends_on = [
-    "module.static_ips",
-    "module.db-instance",
-    "module.vm"
-  ]
-}
+#   depends_on = [
+#     "module.static_ips",
+#     "module.db-instance",
+#     "module.vm"
+#   ]
+# }
 ##################################################################

@@ -5,3 +5,7 @@ variable "health_check_port" {
   default     = 6443
 }
 ##################################################################
+variable "environment" {
+  description = "Value of the env either the dev or the prod"
+}
+##################################################################
