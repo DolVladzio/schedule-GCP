@@ -35,7 +35,7 @@ resource "google_compute_instance" "vm" {
 
   network_interface {
     subnetwork = var.subnet_self_links_map[each.value.subnet[var.environment]]
-    
+
     dynamic "access_config" {
       for_each = each.value.public_ip ? [1] : []
       content {}
