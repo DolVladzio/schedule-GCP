@@ -14,13 +14,17 @@ variable "project_os" {
   description = "Key for OS lookup (e.g. ubuntu)"
 }
 ##################################################################
+variable "environment" {}
+##################################################################
 variable "vm_instances" {
   type = list(object({
-    name                      = string
-    network                   = string
-    size                      = string
-    zone                      = string
-    subnet                    = string
+    name = string
+    size = string
+    zone = string
+    subnet = object({
+      dev  = string
+      prod = string
+    })
     public_ip                 = bool
     enable_vtpm               = bool
     enable_secure_boot        = bool

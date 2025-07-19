@@ -12,7 +12,7 @@ data "google_secret_manager_secret_version" "db_password" {
 }
 ##################################################################
 locals {
-  config = jsondecode(file("${path.module}/../schedule-terraform-config/terraform.json"))
+  config = jsondecode(file("${path.module}/terraform.json"))
 
   region = local.config.project.region[var.environment]
 
@@ -60,20 +60,21 @@ module "network" {
 
 #   depends_on = [module.network]
 # }
-# ##################################################################
-# module "vm" {
-#   source                = "./modules/vm"
-#   project_id            = local.config.project.name
-#   region                = local.region
-#   project_os            = local.config.project.os
-#   vm_instances          = local.config.vm_instances
-#   subnet_self_links_map = module.network.subnet_self_links_by_name
-#   ssh_keys              = local.ssh_keys
-#   service_account_email = local.service_account_email
+##################################################################
+module "vm" {
+  source                = "./modules/vm"
+  environment           = var.environment
+  project_id            = local.config.project.name
+  region                = local.region
+  project_os            = local.config.project.os
+  vm_instances          = local.config.vm_instances
+  subnet_self_links_map = module.network.subnet_self_links_by_name
+  ssh_keys              = local.ssh_keys
+  service_account_email = local.service_account_email
 
-#   depends_on = [module.network]
-# }
-# ##################################################################
+  depends_on = [module.network]
+}
+##################################################################
 # module "static_ips" {
 #   source     = "./modules/static_ips"
 #   static_ips = local.config.static_ips

@@ -34,7 +34,7 @@ resource "google_compute_instance" "vm" {
   allow_stopping_for_update = each.value.allow_stopping_for_update
 
   network_interface {
-    subnetwork = lookup(var.subnet_self_links_map, each.value.subnet)
+    subnetwork = lookup(var.subnet_self_links_map, each.value.subnet[var.environment], null)
 
     dynamic "access_config" {
       for_each = each.value.public_ip ? [1] : []
