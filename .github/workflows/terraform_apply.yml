@@ -26,13 +26,7 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: '${{ secrets.GCP_KEY  }}'
-
-      - name: Clone another repo (specific branch)
-        run: |
-          git clone --branch ${{ github.event.client_payload.environment }} \
-            https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/DolVladzio/schedule-terraform-config.git \
-            ../schedule-terraform-config
+          credentials_json: '${{ secrets.GCP_KEY  }}'          
 
       - name: Add SSH key
         run: |
@@ -44,11 +38,16 @@ jobs:
         if: github.event.client_payload.environment == 'dev'
         run: |
           echo "STATE_BUCKET_NAME=${{ secrets.DEV_STATE_BUCKET_NAME }}" >> $GITHUB_ENV
+          git clone --branch ${{ github.event.client_payload.environment }} \
+            https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/DolVladzio/schedule-terraform-config.git \
+            ../schedule-terraform-config
 
       - name: Set prod STATE_BUCKET_NAME to payload value
         if: github.event.client_payload.environment == 'prod'
         run: |
           echo "STATE_BUCKET_NAME=${{ secrets.PROD_STATE_BUCKET_NAME }}" >> $GITHUB_ENV
+          git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/DolVladzio/schedule-terraform-config.git \
+            ../schedule-terraform-config
 
       - name: Terraform Init
         run: terraform init -backend-config="bucket=${{ env.STATE_BUCKET_NAME }}"
