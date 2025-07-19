@@ -28,9 +28,11 @@ jobs:
         with:
           credentials_json: '${{ secrets.GCP_KEY  }}'
 
-      - name: Clone another repo
+      - name: Clone another repo (specific branch)
         run: |
-          git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/DolVladzio/schedule-terraform-config.git ../schedule-terraform-config
+          git clone --branch ${{ github.event.client_payload.environment }} \
+            https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/DolVladzio/schedule-terraform-config.git \
+            ../schedule-terraform-config
 
       - name: Add SSH key
         run: |
