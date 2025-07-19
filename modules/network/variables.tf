@@ -9,9 +9,14 @@ variable "region" {
   description = "GCP region (e.g. europe-central2)"
 }
 ##################################################################
+variable "environment" {}
+##################################################################
 variable "networks" {
   type = list(object({
-    name                               = string
+    name = object({
+      dev  = string
+      prod = string
+    })
     vpc_cidr                           = string
     psa_range                          = string
     nat_ip_allocate_option             = string
@@ -46,8 +51,11 @@ variable "acls" {
 ##################################################################
 variable "security_groups" {
   type = list(object({
-    name        = string
-    vpc         = string
+    name = string
+    vpc = object({
+      dev  = string
+      prod = string
+    })
     attach_to   = list(string)
     description = string
     ingress = list(object({

@@ -2,11 +2,11 @@
 locals {
   acls_map = { for a in var.acls : a.name => a.cidr }
 
-  vpcs_map = { for vpc in var.networks : vpc.name => vpc }
+  vpcs_map = { for vpc in var.networks : vpc.name[var.environment] => vpc }
   psa_ranges_map = {
     for net in var.networks :
-    net.name => {
-      name                    = "psa-range-${net.name}"
+    net.name[var.environment] => {
+      name                    = "psa-range-${net.name[var.environment]}"
       cidr                    = "${net.psa_range}"
       ip_version              = net.ip_version
       prefix_length           = net.prefix_length
@@ -23,7 +23,7 @@ locals {
 ##################################################################
 resource "google_compute_network" "vpc" {
   for_each                = local.vpcs_map
-  name                    = lookup(each.value, "name", "k8s-vpc")
+  name                    = each.key
   auto_create_subnetworks = false
 }
 ##################################################################
@@ -32,7 +32,7 @@ resource "google_compute_subnetwork" "subnet" {
     for subnet in flatten([
       for network in var.networks : [
         for subnet in network.subnets : {
-          key                  = "${network.name}-${subnet.name}"
+          key                  = "${network.name[var.environment]}-${subnet.name}"
           network_name         = network.name
           subnet_data          = subnet
           aggregation_interval = network.aggregation_interval
@@ -46,7 +46,7 @@ resource "google_compute_subnetwork" "subnet" {
   name          = each.value.subnet_data.name
   ip_cidr_range = each.value.subnet_data.cidr
   region        = var.region
-  network       = google_compute_network.vpc[each.value.network_name].id
+  network       = google_compute_network.vpc[each.value.network_name[var.environment]].id
 
   log_config {
     aggregation_interval = each.value.aggregation_interval
@@ -64,7 +64,7 @@ resource "google_compute_firewall" "ingress" {
   }
 
   name        = each.value.name
-  network     = google_compute_network.vpc[each.value.vpc].self_link
+  network     = google_compute_network.vpc[each.value.vpc[var.environment]].self_link
   target_tags = each.value.attach_to
 
   dynamic "allow" {
@@ -108,26 +108,6 @@ resource "google_compute_router_nat" "cloud_nat" {
 
   nat_ip_allocate_option             = each.value.nat_ip_allocate_option
   source_subnetwork_ip_ranges_to_nat = each.value.source_subnetwork_ip_ranges_to_nat
-
-  depends_on = [google_compute_network.vpc]
-}
-##################################################################
-resource "google_compute_firewall" "lb_health_check" {
-  name      = "${var.project_id}-k3s-vpc-lb-health-check"
-  network   = google_compute_network.vpc["k3s-vpc"].self_link
-  direction = "INGRESS"
-
-  allow {
-    protocol = "tcp"
-    ports    = [tostring(var.health_check_port)]
-  }
-
-  source_ranges = [
-    "130.211.0.0/22",
-    "35.191.0.0/16"
-  ]
-
-  target_tags = ["k3s-worker", "k3s-master"]
 
   depends_on = [google_compute_network.vpc]
 }
