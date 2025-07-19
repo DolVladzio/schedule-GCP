@@ -29,10 +29,7 @@ variable "networks" {
     update_on_creation_fail            = bool
     deletion_policy                    = string
     subnets = list(object({
-      name = object({
-        dev  = string
-        prod = string
-      })
+      name   = string
       cidr   = string
       public = bool
       zone   = string
@@ -46,10 +43,7 @@ variable "networks" {
 ##################################################################
 variable "acls" {
   type = list(object({
-    name = object({
-      dev  = string
-      prod = string
-    })
+    name = string
     cidr = string
   }))
   description = "Named network ACLs for firewall source/dest lookup"
