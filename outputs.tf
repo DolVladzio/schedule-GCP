@@ -9,3 +9,8 @@
 #   value       = module.gke_cluster.cluster_ca_certificates
 # }
 # ##################################################################
+output "subnet_self_links_by_name" {
+	description = "Map of subnets"
+	value = module.network.subnet_self_links_by_name
+}
+##################################################################
