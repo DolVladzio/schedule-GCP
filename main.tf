@@ -13,6 +13,7 @@ data "google_secret_manager_secret_version" "db_password" {
 ##################################################################
 locals {
   config = jsondecode(file("${path.module}/../schedule-terraform-config/terraform.json"))
+  # config = jsondecode(file("${path.module}/terraform.json"))
 
   region = local.config.project.region[var.environment]
 
@@ -75,11 +76,12 @@ module "vm" {
   depends_on = [module.network]
 }
 ##################################################################
-# module "static_ips" {
-#   source     = "./modules/static_ips"
-#   static_ips = local.config.static_ips
-# }
-# ##################################################################
+module "static_ips" {
+  source      = "./modules/static_ips"
+  environment = var.environment
+  static_ips  = local.config.static_ips
+}
+##################################################################
 # module "cloudflare_dns" {
 #   source               = "git@github.com:DolVladzio/cloudflare_dns.git?ref=main"
 #   cloudflare_api_token = local.config.project.cloudflare_api_token
