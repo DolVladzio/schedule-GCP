@@ -43,7 +43,7 @@ resource "google_compute_subnetwork" "subnet" {
     ]) : subnet.key => subnet
   }
 
-  name          = each.value.subnet_data.name[var.environment]
+  name          = "${each.value.network_name[var.environment]}-${each.value.subnet_data.name[var.environment]}"
   ip_cidr_range = each.value.subnet_data.cidr
   region        = var.region
   network       = google_compute_network.vpc[each.value.network_name[var.environment]].id
