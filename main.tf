@@ -12,7 +12,7 @@ data "google_secret_manager_secret_version" "db_password" {
 }
 ##################################################################
 locals {
-  config = jsondecode(file("${path.module}/terraform.json"))
+  config = jsondecode(file("${path.module}/schedule-terraform-config/terraform.json"))
 
   region = local.config.project.region[var.environment]
 
