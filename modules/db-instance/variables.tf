@@ -1,9 +1,14 @@
 ##################################################################
+variable "environment" {}
+##################################################################
 variable "databases" {
   description = "List of database configurations"
   type = list(object({
-    name    = string
-    network = string
+    name = string
+    network = object({
+      dev  = string
+      prod = string
+    })
     type    = string
     version = string
     size    = string
@@ -16,12 +21,11 @@ variable "databases" {
       start_time                     = string
       point_in_time_recovery_enabled = bool
     }))
-    zone            = list(string)
-    subnets         = list(string)
-    port            = number
-    security_groups = list(string)
-    region          = optional(string)
-    secondary_zone  = optional(string)
+    zone                = list(string)
+    port                = number
+    ipv4_enabled        = bool
+    deletion_protection = bool
+    secondary_zone      = optional(string)
   }))
 }
 ##################################################################
@@ -33,11 +37,6 @@ variable "private_networks" {
 variable "project_id" {
   description = "GCP project ID"
   type        = string
-}
-##################################################################
-variable "subnet_self_links" {
-  description = "Map of subnet name to self-link"
-  type        = map(string)
 }
 ##################################################################
 variable "region" {

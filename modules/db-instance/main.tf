@@ -35,12 +35,12 @@ resource "google_sql_database_instance" "primary" {
     }
 
     ip_configuration {
-      ipv4_enabled    = false
-      private_network = lookup(var.private_networks, each.value.network)
+      ipv4_enabled    = each.value.ipv4_enabled
+      private_network = var.private_networks[each.value.network[var.environment]]
     }
   }
 
-  deletion_protection = false
+  deletion_protection = each.value.deletion_protection
 }
 ##################################################################
 resource "google_sql_database" "databases" {

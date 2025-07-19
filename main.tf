@@ -49,18 +49,18 @@ module "network" {
   health_check_port = var.health_check_port
 }
 ##################################################################
-# module "db-instance" {
-#   source            = "./modules/db-instance"
-#   project_id        = local.config.project.name
-#   region            = local.region
-#   databases         = local.config.databases
-#   private_networks  = module.network.vpc_self_links
-#   subnet_self_links = module.network.subnet_self_links_by_name
-#   db_username       = data.google_secret_manager_secret_version.db_username.secret_data
-#   db_pass           = data.google_secret_manager_secret_version.db_password.secret_data
+module "db-instance" {
+  source           = "./modules/db-instance"
+  environment      = var.environment
+  project_id       = local.config.project.name
+  region           = local.region
+  databases        = local.config.databases
+  private_networks = module.network.vpc_self_links
+  db_username      = data.google_secret_manager_secret_version.db_username.secret_data
+  db_pass          = data.google_secret_manager_secret_version.db_password.secret_data
 
-#   depends_on = [module.network]
-# }
+  depends_on = [module.network]
+}
 ##################################################################
 module "vm" {
   source                = "./modules/vm"
