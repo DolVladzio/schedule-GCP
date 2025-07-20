@@ -1,12 +1,12 @@
 ##################################################################
 data "google_secret_manager_secret_version" "db_username" {
-  secret  = local.config.project.secret_name_db_username
+  secret  = local.config.project.secrets[0].secret_name_db_username
   project = local.config.project.name
   version = "latest"
 }
 
 data "google_secret_manager_secret_version" "db_password" {
-  secret  = local.config.project.secret_name_db_pass
+  secret  = local.config.project.secrets[0].secret_name_db_pass
   project = local.config.project.name
   version = "latest"
 }
@@ -20,22 +20,20 @@ locals {
   ssh_keys              = local.config.project.keys
   service_account_email = local.config.project.service_account_email
 
-  # primary_gke_key = keys(module.gke_cluster.cluster_endpoints)[0]
+  db_name = local.config.databases[0].name
 
-  db_name = "maindb"
+  inventory = templatefile("${path.module}/inventory.tpl", {
+    bastion_host       = module.vm.public_ips[local.config.vm_instances[0].name]
+    cloud_sql_instance = "${local.config.project.name}:${local.region}:${local.db_name}"
 
-  # inventory = templatefile("${path.module}/inventory.tpl", {
-  #   bastion_host       = module.vm.public_ips["bastion"]
-  #   cloud_sql_instance = "${local.config.project.name}:${local.region}:${local.config.databases[0].name}"
+    db_host     = module.db-instance.db_hosts[local.db_name]
+    db_user     = module.db-instance.db_users[local.db_name]
+    db_password = module.db-instance.db_passwords[local.db_name]
+    db_port     = module.db-instance.db_ports[local.db_name]
+    db_name     = module.db-instance.db_names[local.db_name]
 
-  #   db_host     = module.db-instance.db_hosts[local.db_name]
-  #   db_user     = module.db-instance.db_users[local.db_name]
-  #   db_password = module.db-instance.db_passwords[local.db_name]
-  #   db_port     = module.db-instance.db_ports[local.db_name]
-  #   db_name     = module.db-instance.db_names[local.db_name]
-
-  #   static_ips = module.static_ips.ip_addresses
-  # })
+    static_ips = module.static_ips.ip_addresses
+  })
 }
 ##################################################################
 module "network" {
@@ -101,23 +99,23 @@ module "gke_cluster" {
   depends_on = [module.network]
 }
 ##################################################################
-# module "cloud_monitoring" {
-#   source            = "./modules/cloud_monitoring"
-#   monitoring_config = local.config.monitoring
+module "cloud_monitoring" {
+  source            = "./modules/cloud_monitoring"
+  monitoring_config = local.config.monitoring
 
-#   depends_on = [module.gke_cluster]
-# }
+  depends_on = [module.gke_cluster]
+}
 ##################################################################
-# module "inventory" {
-#   source              = "./modules/inventory"
-#   inventory           = local.inventory
-#   ansible_bucket_name = local.config.project.ansible_bucket_name
-#   inventory_info      = local.config.inventory_info
+module "inventory" {
+  source              = "./modules/inventory"
+  inventory           = local.inventory
+  ansible_bucket_name = local.config.project.ansible_bucket_name
+  inventory_info      = local.config.inventory_info
 
-#   depends_on = [
-#     "module.static_ips",
-#     "module.db-instance",
-#     "module.vm"
-#   ]
-# }
+  depends_on = [
+    "module.static_ips",
+    "module.db-instance",
+    "module.vm"
+  ]
+}
 ##################################################################

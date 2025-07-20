@@ -14,7 +14,7 @@ variable "monitoring_config" {
       filter           = string
       metric_kind      = string
       value_type       = string
-      unit             = optional(string, "1")
+      unit             = string
       label_extractors = optional(map(string), {})
     }))
 
