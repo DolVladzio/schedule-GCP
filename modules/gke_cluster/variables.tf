@@ -1,21 +1,45 @@
 ##################################################################
+variable "environment" {}
+##################################################################
 variable "clusters" {
   description = "Map of GKE clusters to create"
   type = map(object({
-    name               = string
-    location           = string
-    network            = string
-    subnetwork         = string
-    initial_node_count = number
+    name = object({
+      dev  = string
+      prod = string
+    })
+    location = object({
+      dev  = string
+      prod = string
+    })
+    network = object({
+      dev  = string
+      prod = string
+    })
+    subnetwork = object({
+      dev  = string
+      prod = string
+    })
+    initial_node_count       = number
+    deletion_protection      = bool
+    remove_default_node_pool = bool
+    enable_private_nodes     = bool
+    enable_private_endpoint  = bool
     node_pools = optional(list(object({
-      name           = string
-      machine_type   = string
+      name = string
+      machine_type = object({
+        dev  = string
+        prod = string
+      })
       min_node_count = number
-      max_node_count = number
-      disk_size_gb   = optional(number)
-      oauth_scopes   = optional(list(string))
-      auto_upgrade   = optional(bool)
-      auto_repair    = optional(bool)
+      max_node_count = object({
+        dev  = string
+        prod = string
+      })
+      disk_size_gb = optional(number)
+      oauth_scopes = optional(list(string))
+      auto_upgrade = optional(bool)
+      auto_repair  = optional(bool)
     })), [])
     authorized_networks = list(object({
       cidr_block   = string

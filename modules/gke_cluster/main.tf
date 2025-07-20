@@ -6,8 +6,8 @@ locals {
         pool,
         {
           cluster_key      = cluster_key
-          cluster_name     = cluster.name
-          cluster_location = cluster.location
+          cluster_name     = cluster.name[var.environment]
+          cluster_location = cluster.location[var.environment]
           pool_key         = "${cluster_key}-${pool.name}"
         }
       )
@@ -21,16 +21,16 @@ locals {
 ##################################################################
 resource "google_container_cluster" "gke" {
   for_each = var.clusters
-  name     = each.value.name
-  location = each.value.location
+  name     = each.value.name[var.environment]
+  location = each.value.location[var.environment]
 
-  deletion_protection = false
+  deletion_protection = each.value.deletion_protection
 
   initial_node_count       = each.value.initial_node_count
-  remove_default_node_pool = true
+  remove_default_node_pool = each.value.remove_default_node_pool
 
-  network    = var.vpc_self_links[each.value.network]
-  subnetwork = var.subnet_self_links[each.value.subnetwork]
+  network    = var.vpc_self_links[each.value.network[var.environment]]
+  subnetwork = var.subnet_self_links[each.value.subnetwork[var.environment]]
 
   node_config {
     service_account = var.service_account_email
@@ -39,8 +39,8 @@ resource "google_container_cluster" "gke" {
   dynamic "private_cluster_config" {
     for_each = each.value.private_cluster ? [1] : []
     content {
-      enable_private_nodes    = true
-      enable_private_endpoint = false
+      enable_private_nodes    = each.value.enable_private_nodes
+      enable_private_endpoint = each.value.enable_private_endpoint
     }
   }
 
@@ -65,7 +65,7 @@ resource "google_container_node_pool" "custom_node_pools" {
 
   node_config {
     service_account = var.service_account_email
-    machine_type    = lookup(each.value, "machine_type", "e2-medium")
+    machine_type    = each.value.machine_type[var.environment]
     image_type      = lookup(each.value, "image_type", "COS")
     disk_size_gb    = lookup(each.value, "disk_size_gb", 20)
     oauth_scopes = lookup(each.value, "oauth_scopes", [
@@ -78,7 +78,7 @@ resource "google_container_node_pool" "custom_node_pools" {
 
   autoscaling {
     min_node_count = each.value.min_node_count
-    max_node_count = each.value.max_node_count
+    max_node_count = each.value.max_node_count[var.environment]
   }
 
   management {
