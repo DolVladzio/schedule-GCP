@@ -66,13 +66,13 @@ resource "google_container_node_pool" "custom_node_pools" {
   node_config {
     service_account = var.service_account_email
     machine_type    = each.value.machine_type[var.environment]
-    image_type      = lookup(each.value, "image_type", "COS")
+    image_type      = each.value.image_type
     disk_size_gb    = lookup(each.value, "disk_size_gb", 20)
     oauth_scopes = lookup(each.value, "oauth_scopes", [
       "https://www.googleapis.com/auth/cloud-platform"
     ])
     workload_metadata_config {
-      mode = lookup(each.value, "workload_metadata_config", "GKE_METADATA")
+      mode = each.value.workload_metadata_config
     }
   }
 

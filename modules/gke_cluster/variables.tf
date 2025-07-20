@@ -31,15 +31,17 @@ variable "clusters" {
         dev  = string
         prod = string
       })
+      image_type     = string
       min_node_count = number
       max_node_count = object({
         dev  = string
         prod = string
       })
-      disk_size_gb = optional(number)
-      oauth_scopes = optional(list(string))
-      auto_upgrade = optional(bool)
-      auto_repair  = optional(bool)
+      workload_metadata_config = string
+      disk_size_gb             = optional(number)
+      oauth_scopes             = optional(list(string))
+      auto_upgrade             = optional(bool)
+      auto_repair              = optional(bool)
     })), [])
     authorized_networks = list(object({
       cidr_block   = string
