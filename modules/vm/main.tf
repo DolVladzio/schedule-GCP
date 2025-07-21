@@ -13,10 +13,10 @@ locals {
 }
 ##################################################################
 resource "google_compute_instance" "vm" {
-  for_each = { for vm in var.vm_instances : vm.name => vm }
+  for_each = { for vm in var.vm_instances : vm.name[var.environment] => vm }
 
   project      = var.project_id
-  name         = each.key
+  name         = each.value.name[var.environment]
   machine_type = lookup(local.size_map, each.value.size, each.value.size)
   zone         = "${var.region}-${each.value.zone}"
 
@@ -48,12 +48,6 @@ resource "google_compute_instance" "vm" {
       ssh_keys = join("\n", var.ssh_keys)
     })
   }
-
-  tags = concat(
-    tolist(each.value.tags),
-    lookup(each.value, "security_groups", []),
-    ["monitoring"]
-  )
 
   service_account {
     email  = var.service_account_email

@@ -18,7 +18,10 @@ variable "environment" {}
 ##################################################################
 variable "vm_instances" {
   type = list(object({
-    name = string
+    name = object({
+      dev  = string
+      prod = string
+    })
     size = string
     zone = string
     subnet = object({
@@ -30,8 +33,6 @@ variable "vm_instances" {
     enable_secure_boot        = bool
     block-project-ssh-keys    = bool
     allow_stopping_for_update = bool
-    tags                      = set(string)
-    security_groups           = optional(list(string), [])
   }))
   description = "List of VMs (from config.json)"
 }
