@@ -27,17 +27,11 @@ variable "monitoring_config" {
     }))
 
     alert_policies = list(object({
-      name = object({
-        dev  = string
-        prod = string
-      })
+      name     = object({ dev = string, prod = string })
       combiner = string
       conditions = list(object({
-        name = object({
-          dev  = string
-          prod = string
-        })
-        metric_filter = string
+        name          = object({ dev = string, prod = string })
+        metric_filter = object({ dev = string, prod = string })
         threshold     = number
         duration      = string
         comparison    = string

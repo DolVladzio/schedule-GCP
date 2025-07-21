@@ -32,7 +32,7 @@ resource "google_monitoring_alert_policy" "alerts" {
     content {
       display_name = conditions.value.name[var.environment]
       condition_threshold {
-        filter          = conditions.value.metric_filter
+        filter          = conditions.value.metric_filter[var.environment]
         comparison      = conditions.value.comparison
         threshold_value = conditions.value.threshold
         duration        = conditions.value.duration
