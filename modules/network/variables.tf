@@ -51,7 +51,10 @@ variable "acls" {
 ##################################################################
 variable "security_groups" {
   type = list(object({
-    name = string
+    name = object({
+      dev  = string
+      prod = string
+    })
     vpc = object({
       dev  = string
       prod = string

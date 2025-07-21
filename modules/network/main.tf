@@ -18,7 +18,7 @@ locals {
     }
   }
 
-  sg_to_instances_map = { for sg in var.security_groups : sg.name => sg.attach_to }
+  sg_to_instances_map = { for sg in var.security_groups : sg.name[var.environment] => sg.attach_to }
 }
 ##################################################################
 resource "google_compute_network" "vpc" {
@@ -59,11 +59,11 @@ resource "google_compute_subnetwork" "subnet" {
 ##################################################################
 resource "google_compute_firewall" "ingress" {
   for_each = {
-    for sg in var.security_groups : sg.name => sg
+    for sg in var.security_groups : sg.name[var.environment] => sg
     if length(sg.ingress) > 0
   }
 
-  name        = each.value.name
+  name        = each.value.name[var.environment]
   network     = google_compute_network.vpc[each.value.vpc[var.environment]].self_link
   target_tags = each.value.attach_to
 
