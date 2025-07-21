@@ -65,7 +65,7 @@ resource "google_compute_firewall" "ingress" {
 
   name        = each.value.name[var.environment]
   network     = google_compute_network.vpc[each.value.vpc[var.environment]].self_link
-  target_tags = each.value.attach_to
+  target_tags = [each.value.attach_to[var.environment]]
 
   dynamic "allow" {
     for_each = each.value.ingress

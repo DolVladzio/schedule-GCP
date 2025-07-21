@@ -59,7 +59,10 @@ variable "security_groups" {
       dev  = string
       prod = string
     })
-    attach_to   = list(string)
+    attach_to = object({
+      dev  = string
+      prod = string
+    })
     description = string
     ingress = list(object({
       protocol = string
