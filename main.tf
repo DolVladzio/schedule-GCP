@@ -20,10 +20,10 @@ locals {
   ssh_keys              = local.config.project.keys
   service_account_email = local.config.project.service_account_email
 
-  db_name = local.config.databases[0].name
+  db_name = local.config.databases[0].name[var.environment]
 
   inventory = templatefile("${path.module}/inventory.tpl", {
-    bastion_host       = module.vm.public_ips[local.config.vm_instances[0].name]
+    bastion_host       = module.vm.public_ips[local.config.vm_instances[0].name[var.environment]]
     cloud_sql_instance = "${local.config.project.name}:${local.region}:${local.db_name}"
 
     db_host     = module.db-instance.db_hosts[local.db_name]
@@ -109,7 +109,7 @@ module "cloud_monitoring" {
 module "inventory" {
   source              = "./modules/inventory"
   inventory           = local.inventory
-  ansible_bucket_name = local.config.project.ansible_bucket_name
+  ansible_bucket_name = local.config.project.ansible_bucket_name[var.environment]
   inventory_info      = local.config.inventory_info
 
   depends_on = [
