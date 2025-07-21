@@ -4,7 +4,10 @@ variable "environment" {}
 variable "databases" {
   description = "List of database configurations"
   type = list(object({
-    name = string
+    name = object({
+      dev  = string
+      prod = string
+    })
     network = object({
       dev  = string
       prod = string

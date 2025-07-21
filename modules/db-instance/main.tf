@@ -1,7 +1,7 @@
 ##################################################################
 resource "google_sql_database_instance" "primary" {
-  for_each         = { for db in var.databases : db.name => db }
-  name             = each.value.name
+  for_each         = { for db in var.databases : db.name[var.environment] => db }
+  name             = each.value.name[var.environment]
   region           = var.region
   database_version = "${upper(each.value.type)}_${each.value.version}"
 
