@@ -4,9 +4,9 @@ locals {
 }
 ##################################################################
 resource "google_logging_metric" "log_based_metrics" {
-  for_each = { for m in local.config.log_based_metrics : m.name => m }
+  for_each = { for m in local.config.log_based_metrics : m.name[var.environment] => m }
 
-  name        = each.value.name
+  name        = each.value.name[var.environment]
   description = each.value.description
   filter      = each.value.filter
 
@@ -20,17 +20,17 @@ resource "google_logging_metric" "log_based_metrics" {
 }
 ##################################################################
 resource "google_monitoring_alert_policy" "alerts" {
-  for_each = { for a in local.config.alert_policies : a.name => a }
+  for_each = { for a in local.config.alert_policies : a.name[var.environment] => a }
 
-  display_name = each.value.name
+  display_name = each.value.name[var.environment]
   combiner     = each.value.combiner
   enabled      = true
 
   dynamic "conditions" {
-    for_each = { for c in each.value.conditions : c.name => c }
+    for_each = { for c in each.value.conditions : c.name[var.environment] => c }
 
     content {
-      display_name = conditions.value.name
+      display_name = conditions.value.name[var.environment]
       condition_threshold {
         filter          = conditions.value.metric_filter
         comparison      = conditions.value.comparison
@@ -46,7 +46,7 @@ resource "google_monitoring_alert_policy" "alerts" {
   }
 
   notification_channels = [
-    for ch in local.config.notification_channels : google_monitoring_notification_channel.channels[ch.name].name
+    for ch in local.config.notification_channels : google_monitoring_notification_channel.channels[ch.name[var.environment]].name
   ]
 
   depends_on = [
@@ -56,10 +56,10 @@ resource "google_monitoring_alert_policy" "alerts" {
 ##################################################################
 resource "google_monitoring_notification_channel" "channels" {
   for_each = {
-    for ch in local.config.notification_channels : ch.name => ch
+    for ch in local.config.notification_channels : ch.name[var.environment] => ch
   }
 
-  display_name = each.value.name
+  display_name = each.value.name[var.environment]
   type         = each.value.type
   labels       = each.value.labels
 }

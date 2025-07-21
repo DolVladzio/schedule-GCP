@@ -100,6 +100,7 @@ module "gke_cluster" {
 ##################################################################
 module "cloud_monitoring" {
   source            = "./modules/cloud_monitoring"
+  environment       = var.environment
   monitoring_config = local.config.monitoring
 
   depends_on = [module.gke_cluster]
