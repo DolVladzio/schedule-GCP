@@ -31,7 +31,6 @@ variable "vm_instances" {
     public_ip                 = bool
     enable_vtpm               = bool
     enable_secure_boot        = bool
-    block-project-ssh-keys    = bool
     allow_stopping_for_update = bool
   }))
   description = "List of VMs (from config.json)"
