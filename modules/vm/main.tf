@@ -43,7 +43,6 @@ resource "google_compute_instance" "vm" {
   }
 
   metadata = {
-    block-project-ssh-keys = "${each.value.block-project-ssh-keys}"
     startup-script = templatefile("${path.root}/shell_scripts/metadata.sh", {
       ssh_keys = join("\n", var.ssh_keys)
     })
