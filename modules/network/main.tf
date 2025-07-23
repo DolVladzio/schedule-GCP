@@ -1,13 +1,13 @@
 ##################################################################
 locals {
-  acls_map = { for a in var.acls : a.name => a.cidr }
+  acls_map = { for a in var.acls : a.name[var.environment] => a.cidr }
 
   vpcs_map = { for vpc in var.networks : vpc.name[var.environment] => vpc }
+
   psa_ranges_map = {
-    for net in var.networks :
-    net.name[var.environment] => {
+    for net in var.networks : net.name[var.environment] => {
       name                    = "psa-range-${net.name[var.environment]}"
-      cidr                    = "${net.psa_range}"
+      cidr                    = "${net.psa_range[var.environment]}"
       ip_version              = net.ip_version
       prefix_length           = net.prefix_length
       address_type            = net.address_type
@@ -32,7 +32,7 @@ resource "google_compute_subnetwork" "subnet" {
     for subnet in flatten([
       for network in var.networks : [
         for subnet in network.subnets : {
-          key                  = "${network.name[var.environment]}-${subnet.name}"
+          key                  = subnet.name[var.environment]
           network_name         = network.name
           subnet_data          = subnet
           aggregation_interval = network.aggregation_interval
@@ -43,8 +43,8 @@ resource "google_compute_subnetwork" "subnet" {
     ]) : subnet.key => subnet
   }
 
-  name          = "${each.value.network_name[var.environment]}-${each.value.subnet_data.name}"
-  ip_cidr_range = each.value.subnet_data.cidr
+  name          = each.value.subnet_data.name[var.environment]
+  ip_cidr_range = each.value.subnet_data.cidr[var.environment]
   region        = var.region
   network       = google_compute_network.vpc[each.value.network_name[var.environment]].id
 

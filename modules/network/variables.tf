@@ -17,8 +17,14 @@ variable "networks" {
       dev  = string
       prod = string
     })
-    vpc_cidr                           = string
-    psa_range                          = string
+    vpc_cidr = object({
+      dev  = string
+      prod = string
+    })
+    psa_range = object({
+      dev  = string
+      prod = string
+    })
     nat_ip_allocate_option             = string
     source_subnetwork_ip_ranges_to_nat = string
     ip_version                         = string
@@ -29,8 +35,14 @@ variable "networks" {
     update_on_creation_fail            = bool
     deletion_policy                    = string
     subnets = list(object({
-      name   = string
-      cidr   = string
+      name = object({
+        dev  = string
+        prod = string
+      })
+      cidr = object({
+        dev  = string
+        prod = string
+      })
       public = bool
       zone   = string
     }))
@@ -43,8 +55,16 @@ variable "networks" {
 ##################################################################
 variable "acls" {
   type = list(object({
-    name = string
-    cidr = string
+    name = object({
+      dev  = string
+      prod = string
+    })
+    cidr = object({
+      dev  = string
+      prod = string
+    })
+    public = bool
+    zone   = string
   }))
   description = "Named network ACLs for firewall source/dest lookup"
 }
