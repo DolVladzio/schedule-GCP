@@ -32,6 +32,14 @@ variable "vm_instances" {
     enable_vtpm               = bool
     enable_secure_boot        = bool
     allow_stopping_for_update = bool
+    tags = object({
+      dev  = string
+      prod = string
+    })
+    security_groups = object({
+      dev  = string
+      prod = string
+    })
   }))
   description = "List of VMs (from config.json)"
 }
