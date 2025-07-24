@@ -87,7 +87,10 @@ variable "security_groups" {
     ingress = list(object({
       protocol = string
       port     = number
-      source   = string
+      source = object({
+        dev  = string
+        prod = string
+      })
     }))
   }))
   description = "Firewall definitions mapping tags → ingress/egress rules"

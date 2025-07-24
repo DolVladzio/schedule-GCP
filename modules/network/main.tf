@@ -18,7 +18,7 @@ locals {
     }
   }
 
-  sg_to_instances_map = { for sg in var.security_groups : sg.name[var.environment] => sg.attach_to }
+  sg_to_instances_map = { for sg in var.security_groups : sg.name[var.environment] => sg.attach_to[var.environment] }
 }
 ##################################################################
 resource "google_compute_network" "vpc" {
@@ -79,13 +79,15 @@ resource "google_compute_firewall" "ingress" {
 
   source_ranges = distinct(flatten([
     for rule in each.value.ingress :
-    contains(keys(local.acls_map), rule.source) ? [local.acls_map[rule.source]] : ["0.0.0.0/0"]
-    if !contains(keys(local.sg_to_instances_map), rule.source)
+    contains(keys(local.acls_map), rule.source[var.environment]) ? 
+      [local.acls_map[rule.source[var.environment]]] : ["0.0.0.0/0"]
+    if !contains(keys(local.sg_to_instances_map), rule.source[var.environment])
   ]))
 
   source_tags = distinct(flatten([
     for rule in each.value.ingress :
-    contains(keys(local.sg_to_instances_map), rule.source) ? local.sg_to_instances_map[rule.source] : []
+    contains(keys(local.sg_to_instances_map), rule.source[var.environment]) ? 
+      [local.sg_to_instances_map[rule.source[var.environment]]] : []
   ]))
 }
 ##################################################################
