@@ -77,7 +77,7 @@ resource "google_container_node_pool" "custom_node_pools" {
   }
 
   autoscaling {
-    min_node_count = each.value.min_node_count
+    min_node_count = each.value.min_node_count[var.environment]
     max_node_count = each.value.max_node_count[var.environment]
   }
 

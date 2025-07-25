@@ -31,8 +31,11 @@ variable "clusters" {
         dev  = string
         prod = string
       })
-      image_type     = string
-      min_node_count = number
+      image_type = string
+      min_node_count = object({
+        dev  = string
+        prod = string
+      })
       max_node_count = object({
         dev  = string
         prod = string

@@ -52,7 +52,7 @@ resource "google_compute_instance" "vm" {
     [each.value.tags[var.environment]],
     [each.value.security_groups[var.environment]],
     ["monitoring"]
-)
+  )
 
   service_account {
     email  = var.service_account_email
