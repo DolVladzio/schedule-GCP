@@ -26,7 +26,7 @@ resource "google_container_cluster" "gke" {
 
   deletion_protection = each.value.deletion_protection
 
-  initial_node_count       = each.value.initial_node_count
+  initial_node_count       = each.value.initial_node_count[var.environment]
   remove_default_node_pool = each.value.remove_default_node_pool
 
   network    = var.vpc_self_links[each.value.network[var.environment]]

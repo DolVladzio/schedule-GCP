@@ -20,7 +20,10 @@ variable "clusters" {
       dev  = string
       prod = string
     })
-    initial_node_count       = number
+    initial_node_count = object({
+      dev  = number
+      prod = number
+    })
     deletion_protection      = bool
     remove_default_node_pool = bool
     enable_private_nodes     = bool
@@ -33,12 +36,12 @@ variable "clusters" {
       })
       image_type = string
       min_node_count = object({
-        dev  = string
-        prod = string
+        dev  = number
+        prod = number
       })
       max_node_count = object({
-        dev  = string
-        prod = string
+        dev  = number
+        prod = number
       })
       workload_metadata_config = string
       disk_size_gb             = optional(number)
