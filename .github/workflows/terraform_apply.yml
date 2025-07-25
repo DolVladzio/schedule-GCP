@@ -1,4 +1,4 @@
-name: Apply The Terraform Modules
+name: "Dev/Prod: Apply The Terraform Modules"
 
 on:
   workflow_dispatch:
