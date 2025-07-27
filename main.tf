@@ -31,6 +31,10 @@ locals {
     db_port     = module.db-instance.db_ports[local.db_name]
     db_name     = module.db-instance.db_names[local.db_name]
 
+    project_id             = local.config.project.name
+    jenkins_cluster_name   = local.config.gke_clusters["jenkins-cluster"].name[var.environment]
+    jenkins_cluster_region = local.config.gke_clusters["jenkins-cluster"].location[var.environment]
+
     static_ips = module.static_ips.ip_addresses
   })
 }
