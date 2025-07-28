@@ -9,6 +9,8 @@ jenkins_cluster_region=${jenkins_cluster_region}
 repo_name=${repo_name}
 gcr_name=${gcr_name}
 service_account_email=${service_account_email}
+github_user=${github_user}
+github_auth_token=${github_auth_token}
 
 db_host=${db_host}
 db_user=${db_user}
