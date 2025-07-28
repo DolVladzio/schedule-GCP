@@ -6,6 +6,8 @@ ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 project_id=${project_id}
 jenkins_cluster_name=${jenkins_cluster_name}
 jenkins_cluster_region=${jenkins_cluster_region}
+repo_name=${repo_name}
+gcr_name=${gcr_name}
 
 db_host=${db_host}
 db_user=${db_user}
