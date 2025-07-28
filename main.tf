@@ -40,6 +40,8 @@ locals {
     repo_name              = local.config.project.gcr_name
     gcr_name               = local.config.project.artifact_registry_gcp
     service_account_email  = local.config.project.service_account_email
+    github_auth_token      = local.config.project.github_auth_token
+    github_user            = local.config.project.github_user
 
   })
 }
