@@ -39,6 +39,7 @@ locals {
     jenkins_cluster_region = local.config.gke_clusters["jenkins-cluster"].location[var.environment]
     repo_name              = local.config.project.gcr_name
     gcr_name               = local.config.project.artifact_registry_gcp
+    service_account_email  = local.config.project.service_account_email
 
   })
 }
