@@ -3,15 +3,6 @@ ansible_ssh_user=ubuntu
 ansible_ssh_private_key_file=~/.ssh/id_rsa
 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
-project_id=${project_id}
-jenkins_cluster_name=${jenkins_cluster_name}
-jenkins_cluster_region=${jenkins_cluster_region}
-repo_name=${repo_name}
-gcr_name=${gcr_name}
-service_account_email=${service_account_email}
-github_user=${github_user}
-github_auth_token=${github_auth_token}
-
 db_host=${db_host}
 db_user=${db_user}
 db_password=${db_password}

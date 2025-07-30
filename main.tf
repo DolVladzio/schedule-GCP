@@ -32,17 +32,6 @@ locals {
     db_name     = module.db-instance.db_names[local.db_name]
 
     static_ips = module.static_ips.ip_addresses
-
-    # Jenkins envs
-    project_id             = local.config.project.name
-    jenkins_cluster_name   = local.config.gke_clusters["jenkins-cluster"].name[var.environment]
-    jenkins_cluster_region = local.config.gke_clusters["jenkins-cluster"].location[var.environment]
-    repo_name              = local.config.project.gcr_name
-    gcr_name               = local.config.project.artifact_registry_gcp
-    service_account_email  = local.config.project.service_account_email
-    github_auth_token      = local.config.project.github_auth_token
-    github_user            = local.config.project.github_user
-
   })
 }
 ##################################################################
